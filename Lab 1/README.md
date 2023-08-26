@@ -104,17 +104,19 @@ We invented this tool for this lab!
 If you run into technical issues with this tool, you can also use a light switch, dimmer, etc. that you can can manually or remotely control.
 
 \*\***Give us feedback on Tinkerbelle.**\*\*
+Tinkerbelle worked great! I had no issues connecting/using it.
 
 
 ## Part D. Wizard the device
 Take a little time to set up the wizarding set-up that allows for someone to remotely control the device while someone acts with it. Hint: You can use Zoom to record videos, and you can pin someone’s video feed if that is the scene which you want to record. 
 
 \*\***Include your first attempts at recording the set-up video here.**\*\*
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/wakeup.mov)
 
 Now, hange the goal within the same setting, and update the interaction with the paper prototype. 
 
 \*\***Show the follow-up work here.**\*\*
-
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/Untitled.mp4)
 
 ## Part E. Costume the device
 
