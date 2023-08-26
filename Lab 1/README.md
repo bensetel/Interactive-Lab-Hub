@@ -132,6 +132,7 @@ Think about the setting of the device: is the environment a place where the devi
 ## Part F. Record
 
 \*\***Take a video of your prototyped interaction.**\*\*
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/wakeup_two.mp4)
 
 \*\***Please indicate anyone you collaborated with on this Lab.**\*\*
 Be generous in acknowledging their contributions! And also recognizing any other influences (e.g. from YouTube, Github, Twitter) that informed your design. 
