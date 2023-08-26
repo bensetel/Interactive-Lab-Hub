@@ -81,16 +81,17 @@ Storyboards are a tool for visually exploring a users interaction with a device.
 Present your ideas to the other people in your breakout room (or in small groups). You can just get feedback from one another or you can work together on the other parts of the lab.
 
 \*\***Summarize feedback you got here.**\*\*
-
+Feedback was generally positive. One person noted that there are similar commercial devices that do the wake-up part already. 
 
 ## Part B. Act out the Interaction
 
 Try physically acting out the interaction you planned. For now, you can just pretend the device is doing the things you’ve scripted for it. 
 
 \*\***Are there things that seemed better on paper than acted out?**\*\*
+The device needs to be suspended in a way that is somewhat difficult. Also, touching the device requires the user to reach out in a slightly awkward way.
 
 \*\***Are there new ideas that occur to you or your collaborators that come up from the acting?**\*\*
-
+Having the device sit on a desk and face a user lying on their side seems easier to implement than a suspended device facing a user lying on their back.
 
 ## Part C. Prototype the device
 
