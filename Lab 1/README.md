@@ -111,7 +111,7 @@ Tinkerbelle worked great! I had no issues connecting/using it.
 Take a little time to set up the wizarding set-up that allows for someone to remotely control the device while someone acts with it. Hint: You can use Zoom to record videos, and you can pin someone’s video feed if that is the scene which you want to record. 
 
 \*\***Include your first attempts at recording the set-up video here.**\*\*
-![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/wakeup.mov)
+![alt text](https://youtu.be/0l1_20Saa58)
 
 Now, hange the goal within the same setting, and update the interaction with the paper prototype. 
 
