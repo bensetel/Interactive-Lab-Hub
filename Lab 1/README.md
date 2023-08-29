@@ -116,7 +116,7 @@ Take a little time to set up the wizarding set-up that allows for someone to rem
 Now, hange the goal within the same setting, and update the interaction with the paper prototype. 
 
 \*\***Show the follow-up work here.**\*\*
-![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/Untitled.mp4)
+![alt text](https://youtu.be/ozivOIugwf0)
 
 ## Part E. Costume the device
 
