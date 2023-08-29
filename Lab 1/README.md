@@ -159,6 +159,7 @@ One big concern is making sure the device looks nice sitting next to a bed. A cl
 \*\***Please indicate anyone you collaborated with on this Lab.**\*\*
 Be generous in acknowledging their contributions! And also recognizing any other influences (e.g. from YouTube, Github, Twitter) that informed your design. 
 
+
 Yifan Yu (yy2253), Michael Hanlon (mph99), Gilberto Ruiz (ger83), Kenneth Lee (kml343), and Ben Setel (bs836)
 
 
