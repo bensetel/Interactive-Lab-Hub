@@ -139,7 +139,9 @@ One big concern is making sure the device looks nice sitting next to a bed. A cl
 ## Part F. Record
 
 \*\***Take a video of your prototyped interaction.**\*\*
+
 [https://youtube.com/shorts/JFb8AjFkFUo?feature=share]
+
 [https://youtube.com/shorts/PrLfgn9Tb5w?feature=share]
 
 \*\***Please indicate anyone you collaborated with on this Lab.**\*\*
