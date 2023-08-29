@@ -78,6 +78,8 @@ Storyboards are a tool for visually exploring a users interaction with a device.
 \*\***Include pictures of your storyboards here**\*\*
 ![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb1.png)
 ![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb2.png)
+
+
 Present your ideas to the other people in your breakout room (or in small groups). You can just get feedback from one another or you can work together on the other parts of the lab.
 
 \*\***Summarize feedback you got here.**\*\*
@@ -125,9 +127,14 @@ Only now should you start worrying about what the device should look like. Devel
 Think about the setting of the device: is the environment a place where the device could overheat? Is water a danger? Does it need to have bright colors in an emergency setting?
 
 \*\***Include sketches of what your devices might look like here.**\*\*
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/costume_1.jpg)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/costume_2.jpg)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/costume_3.jpg)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/costume_4.jpg)
+
 
 \*\***What concerns or opportunitities are influencing the way you've designed the device to look?**\*\*
-
+One big concern is making sure the device looks nice sitting next to a bed. A clean and calming environment is crucial to good sleep, and the design of the device should reflect that. Also, a device that fits in well is more likely to be kept out and actually used.
 
 ## Part F. Record
 
