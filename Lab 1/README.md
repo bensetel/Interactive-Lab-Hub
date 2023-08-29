@@ -76,8 +76,8 @@ The interaction happens in the user's bedroom. The primary player is either a si
 Storyboards are a tool for visually exploring a users interaction with a device. They are a fast and cheap method to understand user flow, and iterate on a design before attempting to build on it. Take some time to read through this explanation of [storyboarding in UX design](https://www.smashingmagazine.com/2017/10/storyboarding-ux-design/). Sketch seven storyboards of the interactions you are planning. **It does not need to be perfect**, but must get across the behavior of the interactive device and the other characters in the scene. 
 
 \*\***Include pictures of your storyboards here**\*\*
-![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/2484952e87bb6da8b573dd51ad61913c08a5f024/Lab%201/device%20storyboard.jpg)
-
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb1.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb2.png)
 Present your ideas to the other people in your breakout room (or in small groups). You can just get feedback from one another or you can work together on the other parts of the lab.
 
 \*\***Summarize feedback you got here.**\*\*
@@ -136,6 +136,7 @@ Think about the setting of the device: is the environment a place where the devi
 
 \*\***Please indicate anyone you collaborated with on this Lab.**\*\*
 Be generous in acknowledging their contributions! And also recognizing any other influences (e.g. from YouTube, Github, Twitter) that informed your design. 
+Yifan Yu (yy2253), Michael Hanlon (mph99), Gilberto Ruiz (ger83), Kenneth Lee (kml343), and Ben Setel (bs836)
 
 
 
