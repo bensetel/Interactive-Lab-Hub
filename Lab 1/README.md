@@ -80,9 +80,8 @@ Storyboards are a tool for visually exploring a users interaction with a device.
 
 \*\***Include pictures of your storyboards here**\*\*
 
-![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb1.png)
-![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb2.png)
-
+![alt text](https://user-images.githubusercontent.com/142849822/263889461-43d09269-bb73-43a1-89d4-172675aba357.png)
+![alt text](https://user-images.githubusercontent.com/142849822/263889553-d3732ba6-e725-4582-a2fa-e03845578bbd.png)
 
 Present your ideas to the other people in your breakout room (or in small groups). You can just get feedback from one another or you can work together on the other parts of the lab.
 
