@@ -185,3 +185,25 @@ Do last week’s assignment again, but this time:
 3) We will be grading with an emphasis on creativity. 
 
 \*\***Document everything here. (Particularly, we would like to see the storyboard and video, although photos of the prototype are also great.)**\*\*
+
+
+**Part A. Plan**
+To stage an interaction with your interactive device, think about:
+Setting: Where is this interaction happening? (e.g., a jungle, the kitchen) When is it happening?
+Players: Who is involved in the interaction? Who else is there? If you reflect on the design of current day interactive devices like the Amazon Alexa, it’s clear they didn’t take into account people who had roommates, or the presence of children. Think through all the people who are in the setting.
+Activity: What is happening between the actors?
+Goals: What are the goals of each player? (e.g., jumping to a tree, opening the fridge).
+The interactive device can be anything except a computer, a tablet computer or a smartphone, but the main way it interacts needs to be using light.
+**Describe your setting, players, activity and goals here.** 
+The new device will have three main settings for interaction: The user’s bedroom, outdoors while the user is walking, and in the user’s car. 
+The main player will be the person wearing the device, and the age of this user is an adult who is old enough to drive. The secondary beneficiaries of this device are roommates and neighbors of the user(s) who are not disturbed by an audio alarm, as well as other drivers who are kept safer by the user’s awareness while driving. 
+The main activities of this device are focused on interaction through vibration: waking the user up by vibrating their bed, assisting the user in navigating by vibrating to keep them aware of their current direction, and keeping the user awake during critical tasks through vibration.
+Storyboards are a tool for visually exploring a user's interaction with a device. They are a fast and cheap method to understand user flow, and iterate on a design before attempting to build on it. Take some time to read through this explanation of storyboarding in UX design. Sketch seven storyboards of the interactions you are planning. It does not need to be perfect, but must get across the behavior of the interactive device and the other characters in the scene.
+**Include pictures of your storyboards here**
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb1b.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb2b.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb3.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb4.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb5.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb6.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%201/sb7.png)
