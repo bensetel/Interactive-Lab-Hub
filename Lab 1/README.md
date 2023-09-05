@@ -201,7 +201,8 @@ The new device will have three main settings for interaction: The user’s bedro
 The main player will be the person wearing the device, and the age of this user is an adult who is old enough to drive. The secondary beneficiaries of this device are roommates and neighbors of the user(s) who are not disturbed by an audio alarm, as well as other drivers who are kept safer by the user’s awareness while driving. 
 The main activities of this device are focused on interaction through vibration: waking the user up by vibrating their bed, assisting the user in navigating by vibrating to keep them aware of their current direction, and keeping the user awake during critical tasks through vibration.
 
-      
+
+---    
 
 Storyboards are a tool for visually exploring a user's interaction with a device. They are a fast and cheap method to understand user flow, and iterate on a design before attempting to build on it. Take some time to read through this explanation of storyboarding in UX design. Sketch seven storyboards of the interactions you are planning. It does not need to be perfect, but must get across the behavior of the interactive device and the other characters in the scene.
 
