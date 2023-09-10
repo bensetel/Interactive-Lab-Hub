@@ -5,6 +5,16 @@ import board
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_rgb_display.st7789 as st7789
 from time import strftime, sleep
+import datetime
+import json
+import requests
+import sys
+import subprocess
+
+
+ri_station_id = "B06"
+server_url = 'http://localhost:5000'
+
 
 
 # Configuration for CS and DC pins (these are FeatherWing defaults on M0/M4):
@@ -62,18 +72,51 @@ backlight = digitalio.DigitalInOut(board.D22)
 backlight.switch_to_output()
 backlight.value = True
 
+p = subprocess.Popen(['python', '/home/ben/Interactive-Lab-Hub/Lab 2/MTAPI/app.py'], cwd='/home/ben/Interactive-Lab-Hub/Lab 2/MTAPI')
+
+time.sleep(5)
+print('slept')
+
+
+north_trains = []
+south_trains = []
+trains_passed = 0
+
+def play_animation():
+    print('todo') 
+
 while True:
     # Draw a black filled box to clear the image.
     draw.rectangle((0, 0, width, height), outline=0, fill=400)
 
     #TODO: Lab 2 part D work should be filled in here. You should be able to look in cli_clock.py and stats.py 
-
-    my_time = strftime("%m/%d/%Y %H:%M:%S")
+    trains = requests.get(f'{server_url}/by-id/{ri_station_id}').json()
+    cur_north = trains['data'][0]['N']
+    for train in cur_north:
+        train_time = train['time'].split('-04:00')[0] #for whatever reason, all times have a '-4:00' at the end
+        if not(train_time in north_trains):
+            north_trains.append(train_time)
+    cur_south = trains['data'][0]['S']
+    for train in cur_south:
+        train_time = train['time'].split('-04:00')[0] #for whatever reason, all times have a '-4:00' at the end
+        if not(train_time in south_trains):
+            south_trains.append(train_time)
+    for train_time in north_trains:
+        if datetime.datetime.now() > datetime.datetime.strptime(train_time, '%Y-%m-%dT%H:%M:%S'):
+            trains_passed += 1
+            play_animation()
+            north_trains.remove(train_time)
+    for train_time in south_trains:
+        if datetime.datetime.now() > datetime.datetime.strptime(train_time, '%Y-%m-%dT%H:%M:%S'):
+            trains_passed += 1
+            play_animation()
+            south_trains.remove(train_time)
+    
     # Display image.
     disp.image(image, rotation)
     y = top
-    draw.text((x, y), my_time, font=font, fill ="#FFFFFF")
-
+    draw.text((x, y), 'trains passed: ' + str(trains_passed), font=font, fill ="#FFFFFF")
     disp.image(image, rotation)
-    
-    time.sleep(1)
+    time.sleep(10)
+
+
