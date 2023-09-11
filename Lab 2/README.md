@@ -1,6 +1,8 @@
 # Interactive Prototyping: The Clock of Pi
 **NAMES OF COLLABORATORS HERE**
 
+I useed Jon Thornton's "MTAPI" project (https://github.com/jonthornton/MTAPI) to help handle the MTA data feeds. Beyond that, I loosely collaborated with Yifan Yu (yy2253), Michael Hanlon (mph99), Gilberto Ruiz (ger83), and Kenneth Lee (kml343).
+
 Does it feel like time is moving strangely during this semester?
 
 For our first Pi project, we will pay homage to the [timekeeping devices of old](https://en.wikipedia.org/wiki/History_of_timekeeping_devices) by making simple clocks.
