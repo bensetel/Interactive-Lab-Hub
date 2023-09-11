@@ -105,7 +105,7 @@ Please sketch/diagram your clock idea. (Try using a [Verplank digram](http://www
 ## Part G. 
 ## Sketch and brainstorm further interactions and features you would like for your clock for Part 2.
 
-
+Ability to change cities. Play the boarding message for each city when changing to it. Measure busses, ferries, trams, etc, not just subways. 
 
 
 # Prep for Part 2
