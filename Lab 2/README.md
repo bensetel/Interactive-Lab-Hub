@@ -200,6 +200,8 @@ Can you make time interactive? You can look in `screen_test.py` for examples for
 
 Please sketch/diagram your clock idea. (Try using a [Verplank digram](http://www.billverplank.com/IxDSketchBook.pdf)!
 
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%202/Untitled.jpg)
+
 **We strongly discourage and will reject the results of literal digital or analog clock display.**
 
 
