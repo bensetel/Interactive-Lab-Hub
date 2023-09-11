@@ -12,6 +12,8 @@ It is worth spending a little time thinking about how you mark time, and what wo
 **Please indicate anyone you collaborated with on this Lab here.**
 Be generous in acknowledging their contributions! And also recognizing any other influences (e.g. from YouTube, Github, Twitter) that informed your design. 
 
+I useed Jon Thornton's "MTAPI" project (https://github.com/jonthornton/MTAPI) to help handle the MTA data feeds. Beyond that, I loosely collaborated with Yifan Yu (yy2253), Michael Hanlon (mph99), Gilberto Ruiz (ger83), and Kenneth Lee (kml343).
+
 ## Prep
 
 
