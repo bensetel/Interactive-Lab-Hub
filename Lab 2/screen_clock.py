@@ -83,11 +83,13 @@ south_trains = []
 trains_passed = 0
 
 def play_animation():
+    draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 255))
+
     print('todo') 
 
 while True:
     # Draw a black filled box to clear the image.
-    draw.rectangle((0, 0, width, height), outline=0, fill=400)
+    draw.rectangle((0, 0, width, height), outline=0, fill=(0, 150, 150))
 
     #TODO: Lab 2 part D work should be filled in here. You should be able to look in cli_clock.py and stats.py 
     trains = requests.get(f'{server_url}/by-id/{ri_station_id}').json()
