@@ -102,6 +102,9 @@ Please sketch/diagram your clock idea. (Try using a [Verplank digram](http://www
 
 \*\*\***Take a video of your PiClock.**\*\*\*
 
+[https://youtube.com/shorts/mmC4KfvwbPQ]
+[https://youtube.com/shorts/u2nvv-u1Ja4]
+
 ## Part G. 
 ## Sketch and brainstorm further interactions and features you would like for your clock for Part 2.
 
