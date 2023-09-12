@@ -101,7 +101,10 @@ Please sketch/diagram your clock idea. (Try using a [Verplank digram](http://www
 ## Make a short video of your modified barebones PiClock
 
 \*\*\***Take a video of your PiClock.**\*\*\*
+
+
 [https://www.youtube.com/watch?v=mmC4KfvwbPQ]
+
 [https://www.youtube.com/watch?v=u2nvv-u1Ja4]
 
 ## Part G. 
