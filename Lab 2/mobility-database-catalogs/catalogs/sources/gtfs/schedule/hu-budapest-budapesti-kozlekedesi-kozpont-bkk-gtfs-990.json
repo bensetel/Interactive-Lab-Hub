@@ -1,0 +1,23 @@
+{
+    "mdb_source_id": 990,
+    "data_type": "gtfs",
+    "provider": "Budapesti Közlekedési Központ (BKK)",
+    "features": [
+        "pathways"
+    ],
+    "location": {
+        "country_code": "HU",
+        "subdivision_name": "Budapest",
+        "bounding_box": {
+            "minimum_latitude": 47.174793,
+            "maximum_latitude": 47.661038,
+            "minimum_longitude": 18.719305,
+            "maximum_longitude": 19.357892,
+            "extracted_on": "2022-09-01T20:39:18+00:00"
+        }
+    },
+    "urls": {
+        "direct_download": "https://go.bkk.hu/api/static/v1/public-gtfs/budapest_gtfs.zip",
+        "latest": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/hu-budapest-budapesti-kozlekedesi-kozpont-bkk-gtfs-990.zip?alt=media"
+    }
+}

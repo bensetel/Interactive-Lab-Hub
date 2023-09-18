@@ -1,0 +1,18 @@
+{
+    "mdb_source_id": 1338,
+    "data_type": "gtfs-rt",
+    "entity_type": [
+        "vp"
+    ],
+    "provider": "Exo Laurentides",
+    "static_reference": [
+        744
+    ],
+    "urls": {
+        "direct_download": "https://opendata.exo.quebec/ServiceGTFSR/VehiclePosition.pb?agency=CITLA",
+        "authentication_type": 1,
+        "authentication_info": "https://exo.quebec/fr/a-propos/donnees-ouvertes/FormulaireDemandeAcces",
+        "api_key_parameter_name": "token",
+        "license": "https://exo.quebec/fr/a-propos/donnees-ouvertes/FormulaireDemandeAcces"
+    }
+}

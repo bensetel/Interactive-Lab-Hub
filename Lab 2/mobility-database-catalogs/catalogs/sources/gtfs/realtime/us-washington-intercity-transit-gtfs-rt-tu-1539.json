@@ -1,0 +1,15 @@
+{
+    "mdb_source_id": 1539,
+    "data_type": "gtfs-rt",
+    "entity_type": [
+        "tu"
+    ],
+    "provider": "Intercity Transit",
+    "static_reference": [
+        266
+    ],
+    "urls": {
+        "direct_download": "https://its.rideralerts.com/InfoPoint/GTFS-Realtime.ashx?Type=TripUpdate",
+        "authentication_type": 0
+    }
+}

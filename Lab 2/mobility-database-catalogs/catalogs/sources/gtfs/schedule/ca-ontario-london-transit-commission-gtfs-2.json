@@ -1,0 +1,23 @@
+{
+    "mdb_source_id": 2,
+    "data_type": "gtfs",
+    "provider": "London Transit Commission",
+    "name": "",
+    "location": {
+        "country_code": "CA",
+        "subdivision_name": "Ontario",
+        "municipality": "London",
+        "bounding_box": {
+            "minimum_latitude": 42.905244,
+            "maximum_latitude": 43.051188,
+            "minimum_longitude": -81.36311,
+            "maximum_longitude": -81.137591,
+            "extracted_on": "2022-02-22T19:51:34+00:00"
+        }
+    },
+    "urls": {
+        "direct_download": "http://www.londontransit.ca/gtfsfeed/google_transit.zip",
+        "latest": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/ca-ontario-london-transit-commission-gtfs-2.zip?alt=media",
+        "license": "https://www.londontransit.ca/open-data/ltcs-open-data-terms-of-use/"
+    }
+}

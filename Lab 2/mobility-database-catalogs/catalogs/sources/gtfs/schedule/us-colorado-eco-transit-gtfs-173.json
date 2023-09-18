@@ -1,0 +1,25 @@
+{
+    "mdb_source_id": 173,
+    "data_type": "gtfs",
+    "provider": "ECO Transit",
+    "features": [
+        "fares-v1"
+    ],
+    "status": "inactive",
+    "location": {
+        "country_code": "US",
+        "subdivision_name": "Colorado",
+        "municipality": "Eagle County",
+        "bounding_box": {
+            "minimum_latitude": 39.242206,
+            "maximum_latitude": 39.659156,
+            "minimum_longitude": -107.041539,
+            "maximum_longitude": -106.290938,
+            "extracted_on": "2022-07-27T19:33:41+00:00"
+        }
+    },
+    "urls": {
+        "direct_download": "https://www.eaglecounty.us/web/downloads/ecoTransit/GTFS.zip",
+        "latest": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-colorado-eco-transit-gtfs-173.zip?alt=media"
+    }
+}

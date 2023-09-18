@@ -1,0 +1,18 @@
+{
+    "mdb_source_id": 1400,
+    "data_type": "gtfs-rt",
+    "entity_type": [
+        "sa"
+    ],
+    "provider": "Alameda-Contra Costa Transit District (AC Transit)",
+    "static_reference": [
+        1244
+    ],
+    "urls": {
+        "direct_download": "http://api.actransit.org/transit/gtfsrt/alerts",
+        "authentication_type": 1,
+        "authentication_info": "https://api.actransit.org/transit/Account/Register",
+        "api_key_parameter_name": "token",
+        "license": "http://www.actransit.org/data-terms-and-conditions/"
+    }
+}

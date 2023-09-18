@@ -1,0 +1,186 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "The GTFS Schedule source schema of the Mobility Catalogs.",
+  "type": "object",
+  "properties": {
+    "mdb_source_id": {
+      "type": "number",
+      "description": "Unique numerical identifier."
+    },
+    "data_type": {
+      "type": "string",
+      "description": "The data format that the source uses, e.g gtfs, gtfs-rt.",
+      "enum": ["gtfs"]
+    },
+    "provider": {
+      "type": "string",
+      "description": "Name of the transit provider."
+    },
+    "name": {
+      "type": "string",
+      "description": "An optional description of the data source, e.g to specify if the data source is an aggregate of multiple providers, or which network is represented by the source."
+    },
+    "location": {
+      "type": "object",
+      "description": "The location information of the source.",
+      "properties": {
+        "country_code": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 code designating the country where the system is located."
+        },
+        "subdivision_name": {
+          "type": "string",
+          "description": "ISO 3166-2 subdivision name designating the subdivision (e.g province, state, region) where the system is located."
+        },
+        "municipality": {
+          "type": "string",
+          "description": "Primary municipality in which the transit system is located."
+        },
+        "bounding_box": {
+          "type": "object",
+          "description": "This is the bounding box of the data source when it was first added to the catalog. It includes the date and timestamp the bounding box was extracted in UTC.",
+          "oneOf": [
+            {
+              "properties": {
+                "minimum_latitude": {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                "maximum_latitude": {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                "minimum_longitude": {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                "maximum_longitude": {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                "extracted_on": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            {
+              "properties": {
+                "minimum_latitude": {
+                  "type": "null"
+                },
+                "maximum_latitude": {
+                  "type": "null"
+                },
+                "minimum_longitude": {
+                  "type": "null"
+                },
+                "maximum_longitude": {
+                  "type": "null"
+                },
+                "extracted_on": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          ],
+          "required": ["minimum_latitude", "maximum_latitude", "minimum_longitude", "maximum_longitude", "extracted_on"]
+        }
+      },
+      "required": ["country_code", "bounding_box"]
+    },
+    "features": {
+      "type": "array",
+      "description": "A list of features that the source supports.",
+      "items": {
+        "type": "string",
+        "enum": ["fares-v2","fares-v1","flex-v1","flex-v2","pathways"]
+      }
+    },
+    "status": {
+      "type": "string",
+      "description": "The status of the source which can be used to determine if/how to include it in public trip-planning. If not provided, source is assumed to be active. Should be one of: active: The source is active and should be included in public trip-planning. inactive: The source is inactive / hasn't been updated recently and should be included in public trip-planning at risk of providing outdated information. deprecated: The source is explicitly deprecated and should not be included in public trip-planning. development: The source is in development or being used to test a specific feature and should not be included in public trip-planning.",
+      "enum": ["active","deprecated","inactive","development"]
+    },
+    "urls": {
+      "type": "object",
+      "properties": {
+        "direct_download": {
+          "type": "string",
+          "description": "URL that automatically opens the source.",
+          "pattern": "^(http|https|ftp):\/\/[a-zA-Z0-9.,~#{}():&/%='?_+/-]+$"
+        },
+        "authentication_type": {
+          "type": "number",
+          "description": "The authentication type of the source.",
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "authentication_info": {
+          "type": "string",
+          "description": "If authentication is required, this field contains a URL to a human-readable page describing how the authentication should be performed and how credentials can be created. This field is required for `authentication_type=1` and `authentication_type=2`.",
+          "pattern": "^(http|https|ftp):\/\/[a-zA-Z0-9.,~#{}():&/%='?_+/-]+$"
+        },
+        "api_key_parameter_name": {
+          "type": "string",
+          "description": "This field defines the name of the parameter to pass in the URL to provide the API key. This field is required for `authentication_type=1` and `authentication_type=2`."
+        },
+        "latest": {
+          "type": "string",
+          "description": "A stable URL for the latest dataset of a source.",
+          "pattern": "^(http|https|ftp):\/\/[a-zA-Z0-9.,~#{}():&/%='?_+/-]+$"
+        },
+        "license": {
+          "type": "string",
+          "description": "The transit provider’s license information.",
+          "pattern": "^(http|https|ftp):\/\/[a-zA-Z0-9.,~#{}():&/%='?_+/-]+$"
+        }
+      },
+      "oneOf": [
+        {
+          "not": {
+            "required": [
+              "authentication_type"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "authentication_type": {
+                "enum": [
+                  1,
+                  2
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "authentication_info",
+              "api_key_parameter_name"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "authentication_info",
+                "api_key_parameter_name"
+              ]
+            }
+          }
+        }
+      ],
+      "required": ["direct_download", "latest"]
+    }
+  },
+  "required": ["mdb_source_id", "data_type", "provider", "location", "urls"]
+}

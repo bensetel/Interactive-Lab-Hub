@@ -1,0 +1,26 @@
+{
+    "mdb_source_id": 1055,
+    "data_type": "gtfs",
+    "provider": "Mobilités M - Tag",
+    "name": "Transports de l'Agglomération Grenobloise",
+    "features": [
+        "fares-v1"
+    ],
+    "location": {
+        "country_code": "FR",
+        "subdivision_name": "Auvergne-Rhône-Alpes",
+        "municipality": "Grenoble",
+        "bounding_box": {
+            "minimum_latitude": 44.97015,
+            "maximum_latitude": 45.29021,
+            "minimum_longitude": 5.59538,
+            "maximum_longitude": 5.87398,
+            "extracted_on": "2023-01-17T19:30:31+00:00"
+        }
+    },
+    "urls": {
+        "direct_download": "https://data.mobilites-m.fr/api/gtfs/SEM",
+        "latest": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/fr-auvergne-rhone-alpes-transports-de-lagglomeration-grenobloise-tag-gtfs-1055.zip?alt=media",
+        "license": "https://data.mobilites-m.fr/blog/licence-d-utilisation-des-donnees"
+    }
+}

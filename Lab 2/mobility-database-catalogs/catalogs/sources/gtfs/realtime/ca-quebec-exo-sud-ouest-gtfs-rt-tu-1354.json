@@ -1,0 +1,18 @@
+{
+    "mdb_source_id": 1354,
+    "data_type": "gtfs-rt",
+    "entity_type": [
+        "tu"
+    ],
+    "provider": "Exo Sud-ouest",
+    "static_reference": [
+        742
+    ],
+    "urls": {
+        "direct_download": "https://opendata.exo.quebec/ServiceGTFSR/TripUpdate.pb?agency=CITSO",
+        "authentication_type": 1,
+        "authentication_info": "https://exo.quebec/fr/a-propos/donnees-ouvertes/FormulaireDemandeAcces",
+        "api_key_parameter_name": "token",
+        "license": "https://exo.quebec/fr/a-propos/donnees-ouvertes/FormulaireDemandeAcces"
+    }
+}

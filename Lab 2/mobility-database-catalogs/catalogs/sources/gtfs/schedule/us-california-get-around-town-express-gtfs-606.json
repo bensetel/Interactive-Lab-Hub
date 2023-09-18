@@ -1,0 +1,25 @@
+{
+    "mdb_source_id": 606,
+    "data_type": "gtfs",
+    "provider": "Get Around Town Express",
+    "features": [
+        "fares-v2"
+    ],
+    "status": "active",
+    "location": {
+        "country_code": "US",
+        "subdivision_name": "California",
+        "municipality": "Los Angeles",
+        "bounding_box": {
+            "minimum_latitude": 33.9159852759617,
+            "maximum_latitude": 33.9592318964122,
+            "minimum_longitude": -118.225215727351,
+            "maximum_longitude": -118.163997470108,
+            "extracted_on": "2022-12-19T18:37:17+00:00"
+        }
+    },
+    "urls": {
+        "direct_download": "https://raw.githubusercontent.com/LACMTA/los-angeles-regional-gtfs/main/getaroundtownexpress-ca-us/getaroundtownexpress-ca-us.zip",
+        "latest": "https://storage.googleapis.com/storage/v1/b/mdb-latest/o/us-california-get-around-town-express-gtfs-606.zip?alt=media"
+    }
+}

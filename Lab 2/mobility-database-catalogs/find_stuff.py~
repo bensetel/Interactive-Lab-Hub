@@ -1,0 +1,4 @@
+from tools.operations import *
+
+def main():
+    get_sources()
