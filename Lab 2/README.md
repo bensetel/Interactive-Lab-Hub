@@ -124,6 +124,8 @@ Ability to change cities. Play the boarding message for each city when changing 
 
 # Lab 2 Part 2
 
+[https://www.youtube.com/watch?v=tVOddCRNdpA]
+
 Pull Interactive Lab Hub updates to your repo.
 
 Modify the code from last week's lab to make a new visual interface for your new clock. You may [extend the Pi](Extending%20the%20Pi.md) by adding sensors or buttons, but this is not required.
