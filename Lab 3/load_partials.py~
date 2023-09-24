@@ -1,0 +1,4 @@
+import os
+
+with open('/home/ben/Interactive-Lab-Hub/Lab\ 3/speech-scripts/text_dump.txt', 'r') as text_file:
+    
