@@ -1,5 +1,8 @@
 # Chatterboxes
 **NAMES OF COLLABORATORS HERE**
+Kenneth Lee, Gilberto Ruiz, Gloria Hu, Michael Hanlon, Yifan Yu
+
+
 [![Watch the video](https://user-images.githubusercontent.com/1128669/135009222-111fe522-e6ba-46ad-b6dc-d1633d21129c.png)](https://www.youtube.com/embed/Q8FWzLMobx0?start=19)
 
 In this lab, we want you to design interaction with a speech-enabled device--something that listens and talks to you. This device can do anything *but* control lights (since we already did that in Lab 1).  First, we want you first to storyboard what you imagine the conversational interaction to be like. Then, you will use wizarding techniques to elicit examples of what people might say, ask, or respond.  We then want you to use the examples collected from at least two other people to inform the redesign of the device.
@@ -143,6 +146,25 @@ Storyboard and/or use a Verplank diagram to design a speech-enabled device. (Stu
 ![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%203/4.png)
 
 Write out what you imagine the dialogue to be. Use cards, post-its, or whatever method helps you develop alternatives or group responses. 
+
+***Script***
+Gil: Todavía estás trabajando en tu tarea?
+
+Random Person: (probably) huh?
+
+Device: Are you still working on your hw?
+
+Random Person: whatever they say
+
+Gil: Buena suerte en tu tarea, espero que la termines pronto!
+
+Device: Good luck on your hw, I hope you finish it soon!
+
+Random Person: Thank you!
+
+End Scene
+
+
 
 \*\***Please describe and document your process.**\*\*
 We collaboratively brainstromed and came up with a couple of ideas just by talking to each other. Ultimately, we just created the dialogue by speaking with each other after settling on one of the ideas. 
