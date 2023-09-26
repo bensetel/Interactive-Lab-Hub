@@ -110,6 +110,8 @@ python test_microphone.py -m en
 
 \*\***Write your own shell file that verbally asks for a numerical based input (such as a phone number, zipcode, number of pets, etc) and records the answer the respondent provides.**\*\*
 
+This is 'ask_for_numerical.sh'. Note that I couldn't get vosk-transcriber to work, so I modified 'test_microphone.py' instead and then wrote another little python script ('format_partial.py') to process the output from that.
+
 
 ### Serving Pages
 
@@ -135,15 +137,27 @@ Storyboard and/or use a Verplank diagram to design a speech-enabled device. (Stu
 
 \*\***Post your storyboard and diagram here.**\*\*
 
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%203/1.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%203/2.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%203/3.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%203/4.png)
+
 Write out what you imagine the dialogue to be. Use cards, post-its, or whatever method helps you develop alternatives or group responses. 
 
 \*\***Please describe and document your process.**\*\*
+We collaboratively brainstromed and came up with a couple of ideas just by talking to each other. Ultimately, we just created the dialogue by speaking with each other after settling on one of the ideas. 
+
 
 ### Acting out the dialogue
 
 Find a partner, and *without sharing the script with your partner* try out the dialogue you've designed, where you (as the device designer) act as the device you are designing.  Please record this interaction (for example, using Zoom's record feature).
 
 \*\***Describe if the dialogue seemed different than what you imagined when it was acted out, and how.**\*\*
+
+[https://github-production-user-asset-6210df.s3.amazonaws.com/64716158/270498922-0ced3de5-02f3-4889-9c5f-34baffc9b386.mp4]
+
+It went pretty much as expected. 
+
 
 ### Wizarding with the Pi (optional)
 In the [demo directory](./demo), you will find an example Wizard of Oz project. In that project, you can see how audio and sensor data is streamed from the Pi to a wizard controller that runs in the browser.  You may use this demo code as a template. By running the `app.py` script, you can see how audio and sensor data (Adafruit MPU-6050 6-DoF Accel and Gyro Sensor) is streamed from the Pi to a wizard controller that runs in the browser `http://<YouPiIPAddress>:5000`. You can control what the system says from the controller as well!
