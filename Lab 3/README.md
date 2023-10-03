@@ -238,7 +238,7 @@ Answer the following:
 
 ### What lessons can you take away from the WoZ interactions for designing a more autonomous version of the system?
 
-\*\** We could use the video input from the camera for ambient light conditions and adjust the screen color in reaction to them. We could also have it automatically cycle through colors, or "talk to itself" by using the text-to-speech output to generate speech-to-text input. *\*\*
+\*\** Drawing from the Wizard of Oz (WoZ) interactions, there are several insights that can guide the design of a more autonomous iteration. One possibility is leveraging the video input from the camera to gauge ambient light conditions, subsequently adjusting screen colors for optimal visibility. Furthermore, the system could be designed to autonomously cycle through an array of colors or even utilize the text-to-speech output to generate corresponding speech-to-text inputs, essentially enabling the system to "converse" with itself. *\*\*
 
 
 ### How could you use your system to create a dataset of interaction? What other sensing modalities would make sense to capture?
