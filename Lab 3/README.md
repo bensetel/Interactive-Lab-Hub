@@ -238,5 +238,5 @@ Answer the following:
 
 ### How could you use your system to create a dataset of interaction? What other sensing modalities would make sense to capture?
 
-\*\** We could record user interaction, and in particular use the video and microphone from the webcam to create those recordings. We could also store the speech-to-text input and create a database of the most common keywords used. As mentioned above, we could use video as well. We could also use self-generated sound. We  *\*\*
+\*\** We could record user interaction, and in particular use the video and microphone from the webcam to create those recordings. We could also store the speech-to-text input and create a database of the most common keywords used. As mentioned above, we could use video as well. We could also use self-generated sound. *\*\*
 
