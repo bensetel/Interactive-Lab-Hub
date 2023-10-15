@@ -23,4 +23,4 @@ while True:
     elif gesture == 0x03:
         print("left")
     elif gesture == 0x04:
-        print("right")
+        print("right") 
