@@ -14,6 +14,9 @@ from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 import digitalio
 
+import os
+os.chdir('/home/ben/Interactive-Lab-Hub/Lab 4')
+
 
 def init():
     global i2c
@@ -32,10 +35,9 @@ def init():
 
     mpr121 = adafruit_mpr121.MPR121(i2c) #capacity
 
-    #apds = APDS9960(board.I2C()) #gesture
-    #apds.enable_proximity = True 
-    #apds.enable_gesture = True
-
+    apds = APDS9960(board.I2C()) #gesture
+    apds.enable_proximity = True 
+    apds.enable_gesture = True
     RESET_PIN = digitalio.DigitalInOut(board.D4)
     oled = adafruit_ssd1306.SSD1306_I2C(128, 64, board.I2C(), reset=RESET_PIN)
     # Clear display.
@@ -52,27 +54,28 @@ def init():
     
 def pi_it():
     init()
-    os.system('amixer sset Master 100% 100%')
-    """
-    os.system('echo "Welcome to Pi-It" | festival --tts')
-    time.sleep(0.2)
-    os.system('echo "Prepare to play in" | festival --tts')
-    for i in range(5):
-        os.system(f'echo "{5-i}" | festival --tts')
-        time.sleep(1)
-    """
+    start = True
+    if start:
+        os.system('amixer sset Master 100% 100%')
+        os.system('echo "Welcome to Pi-It" | festival --tts')
+        time.sleep(0.2)
+        os.system('echo "Prepare to play in" | festival --tts')
+        for i in range(5):
+            os.system(f'echo "{5-i}" | festival --tts')
+            time.sleep(0.1)
     play()
 
 def play():
-    speed = 1
+    speed = 3
     lost = False
     i = 0
+    os.system('mplayer -noconsolecontrols -volume 60 ./sounds/mega.mp3 &')
     while not lost:
         image = Image.new("1", (oled.width, oled.height))
         draw = ImageDraw.Draw(image)
         oled.image(image)
-        #action = random.randint(0, 2)
-        action = 0
+        action = random.randint(0, 2)
+        #action = 0
         if action == 0:
             os.system('echo "Push it!" | festival --tts')
             draw.text((0, 0), "Push it!", font=font, fill=255)
@@ -138,7 +141,8 @@ def detect(action, speed):
             for x in [myJoystick.horizontal, myJoystick.vertical]:
                 if not(x in default_joystick_vals):
                     joystick = True
-                    break
+            if joystick:
+                break
             now = time.time()
             if now - start > speed:
                 break
