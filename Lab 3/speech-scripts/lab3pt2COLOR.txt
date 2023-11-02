@@ -11,131 +11,29 @@
 }{
   "partial" : ""
 }{
-  "partial" : ""
+  "partial" : "he"
+}{
+  "partial" : "in the like"
+}{
+  "partial" : "in the like at"
+}{
+  "partial" : "in the like at"
+}{
+  "partial" : "in the like at"
+}{
+  "partial" : "in the like at read"
+}{
+  "partial" : "in the like at read"
+}{
+  "partial" : "in the like at read"
+}{
+  "partial" : "in the like at read"
+}{
+  "text" : "in the like at read"
 }{
   "partial" : ""
 }{
   "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : "oh"
-}{
-  "partial" : "oh"
-}{
-  "partial" : "oh"
-}{
-  "partial" : "oh"
-}{
-  "text" : "oh"
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : "oh"
-}{
-  "partial" : "oh"
-}{
-  "partial" : "oh"
-}{
-  "text" : "hello"
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : "blue"
-}{
-  "partial" : "blue"
-}{
-  "partial" : "blue"
-}{
-  "partial" : "blue"
-}{
-  "text" : "blue"
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : "read"
-}{
-  "partial" : "read"
-}{
-  "partial" : "read"
-}{
-  "partial" : "read"
-}{
-  "text" : "read"
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : "yeah"
-}{
-  "partial" : "yeah"
-}{
-  "partial" : "yellow"
-}{
-  "partial" : "yellow"
-}{
-  "partial" : "yellow"
-}{
-  "partial" : "yellow"
-}{
-  "partial" : "yellow"
-}{
-  "text" : "yellow"
 }{
   "partial" : ""
 }{
@@ -163,153 +61,27 @@
 }{
   "partial" : ""
 }{
-  "partial" : "harvey"
+  "partial" : "but"
 }{
-  "partial" : "harvey"
+  "partial" : "that he do"
 }{
-  "partial" : "hardy"
+  "partial" : "that he do an"
 }{
-  "partial" : "hardy"
+  "partial" : "that he do an"
 }{
-  "partial" : "hardy"
+  "partial" : "that he do em"
 }{
-  "partial" : "hardy"
+  "partial" : "that he do em"
 }{
-  "text" : "hardy"
+  "partial" : "that he do em party"
 }{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : "hardly"
-}{
-  "partial" : "hardy"
-}{
-  "partial" : "hardy"
-}{
-  "partial" : "hardy"
-}{
-  "partial" : "hardy"
-}{
-  "text" : "hardly"
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : "party"
-}{
-  "partial" : "party"
-}{
-  "partial" : "party"
-}{
-  "partial" : "party"
-}{
-  "text" : "party"
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
+  "partial" : "that he do em party"
 }{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "text" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
+  "partial" : "that he do em party"
 }{
-  "partial" : ""
-}{
-  "partial" : ""
-}{
-  "partial" : ""
+  "partial" : "that he do em party"
 }{
-  "partial" : ""
+  "text" : "that he do em party"
 }{
   "partial" : ""
 }{
@@ -339,8 +111,6 @@
 }{
   "partial" : ""
 }{
-  "text" : ""
-}{
   "partial" : ""
 }{
   "partial" : ""
@@ -367,7 +137,7 @@
 }{
   "partial" : ""
 }{
-  "partial" : ""
+  "text" : "you know that"
 }{
   "partial" : ""
 }{

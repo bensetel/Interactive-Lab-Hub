@@ -66,7 +66,7 @@ def pi_it():
     play()
 
 def play():
-    speed = 3
+    speed = 1
     lost = False
     i = 0
     os.system('mplayer -noconsolecontrols -volume 60 ./sounds/mega.mp3 &')
