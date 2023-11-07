@@ -35,11 +35,11 @@ def main():
     m = alsaaudio.Mixer(control='Speaker', cardindex=3)
     m.setvolume(100) 
     s = fluidsynth.init('/usr/share/sounds/sf2/FluidR3_GM.sf2',"alsa")
-    
     #fluidsynth.set_instrument(0, 1) #piano on channel 0
-    fluidsynth.set_instrument(1, 50) #strings on channel 1
+    fluidsynth.set_instrument(1, 1) #48) #strings on channel 1
     #fluidsynth.set_instrument(1, 61) #brass section on channel 2
-    
+    fluidsynth.main_volume(1, 127)
+    fluidsynth.control_change(1, 64, 127)
     
 
     ################################
@@ -58,8 +58,8 @@ def main():
     volBar = 400
     volPer = 0
 
-    piano_min = 5
-    piano_max = 107
+    piano_min = 20
+    piano_max = 80
     strings_min = 0
     strings_max = 107
     brass_min = 0
@@ -115,19 +115,12 @@ def main():
             #display pinky
             display_note(img, note_3, 60, 75, 0, 255, 0)
 
-            now = time.time()
-            if now - start > 5:
-                fluidsynth.control_change(1, 64, 0)
-                start = time.time()
-            else:
-                fluidsynth.control_change(1, 64, 127)
-            
             c = Bar('C', (4, 4))
             c.place_notes(note_1, 4)
             c.place_notes(note_2, 4)
             c.place_notes(note_3, 4)
             c.place_rest(4)
-            fluidsynth.play_Bar(c, 1, bpm=80)
+            fluidsynth.play_Bar(c, 1, bpm=200)
             
 
             
