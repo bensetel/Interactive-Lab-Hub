@@ -120,6 +120,8 @@ Plug in the capacitive sensor board with the Qwiic connector. Use the alligator 
 <img src='https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%206/imgs/IMG_2309.jpeg'>
 
 **\*\*\*Pick another part in your kit and try to implement the data streaming with it.\*\*\***
+
+
 [https://youtu.be/36Y1NRr2xoA]
 
 
