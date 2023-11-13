@@ -47,9 +47,7 @@ while True:
         partial = rec.PartialResult()
         print(partial)
         if KEYWORD in partial:
-            
-            val = partial
-            client.publish(topic, val)
+            client.publish(topic, partial)
     time.sleep(0.25)
 
     
