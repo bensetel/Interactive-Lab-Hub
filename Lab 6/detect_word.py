@@ -25,8 +25,20 @@ KEYWORD = 'ben'
 model = Model(lang="en-us")
 sr = sd.query_devices(kind='input')['default_samplerate']
 
+CONTROLLER = True
+
+if CONTROLLER:
+    client.subscribe(topic)
 
 
+client.on_message = on_message
+
+
+def on_message(client, userdata, msg):
+    message = msg.payload.decode('UTF-8')
+    os.system('echo "someone is talking about you! They said:" | festival --tts')
+    os.system(f'echo {message} | festival --tts')
+    
 os.system('cvlc --play-and-exit mi.mp3 &')
 while True:
     with sd.RawInputStream(samplerate=sr, blocksize = 8000, device='default', dtype="int16", channels=1):
@@ -37,5 +49,6 @@ while True:
             os.system('cvlc --play-and-exit klaxon.mp3')
             val = partial
             client.publish(topic, val)
-
     time.sleep(0.25)
+
+    
