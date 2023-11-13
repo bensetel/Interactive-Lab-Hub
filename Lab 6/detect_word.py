@@ -31,7 +31,7 @@ if CONTROLLER:
     client.subscribe(topic)
 
 
-client.on_message = on_message
+
 
 
 def on_message(client, userdata, msg):
@@ -39,7 +39,10 @@ def on_message(client, userdata, msg):
     os.system('cvlc --play-and-exit klaxon.mp3')
     os.system('echo "someone is talking about you! They said:" | festival --tts')
     os.system(f'echo {message} | festival --tts')
-    
+
+
+client.on_message = on_message
+
 os.system('cvlc --play-and-exit mi.mp3 &')
 while True:
     with sd.RawInputStream(samplerate=sr, blocksize = 8000, device='default', dtype="int16", channels=1):
