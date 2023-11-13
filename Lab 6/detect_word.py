@@ -36,6 +36,7 @@ client.on_message = on_message
 
 def on_message(client, userdata, msg):
     message = msg.payload.decode('UTF-8')
+    os.system('cvlc --play-and-exit klaxon.mp3')
     os.system('echo "someone is talking about you! They said:" | festival --tts')
     os.system(f'echo {message} | festival --tts')
     
@@ -46,7 +47,7 @@ while True:
         partial = rec.PartialResult()
         print(partial)
         if KEYWORD in partial:
-            os.system('cvlc --play-and-exit klaxon.mp3')
+            
             val = partial
             client.publish(topic, val)
     time.sleep(0.25)
