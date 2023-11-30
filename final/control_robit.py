@@ -104,3 +104,6 @@ def on_message(client, userdata, msg):
         print('landmarks!')
         move_servo(servo_num, SERVOMIN, SERVOMAX, 1)
     last_msg = message
+
+if __name__=="__main__":
+    main()
