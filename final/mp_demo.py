@@ -30,11 +30,12 @@ class HumanPoseDetection:
         print("callback called!")
         print("type result:", type(result))
         print("type output_image:",type(output_image))
-        print('result_dir:', result.__dir__())
-        annotated_image = draw_landmarks_on_image(output_image, result)
-        cv2.imshow('blick', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
-        cv2.waitKey(0) 
-        cv2.destroyAllWindows()
+        print("pose landmarks:", result.pose_landmarks)
+
+        #annotated_image = draw_landmarks_on_image(output_image, result)
+        #cv2.imshow('blick', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
+        #cv2.waitKey(0) 
+        #cv2.destroyAllWindows()
 
         # cv2.imshow('blick', output_image.numpy_view())
         # cv2.waitKey(0) 
@@ -48,13 +49,6 @@ class HumanPoseDetection:
         # print(annotated_image))
         time.sleep(1)
         return
-    # time.sleep(5)
-    # cv2.imshow('blick', annotated_image)
-    # cv2.waitKey(0) 
-    # cv2.destroyAllWindows()
-
-
-    # return
 
         
     def detect_pose(self):
@@ -73,18 +67,18 @@ def draw_landmarks_on_image(rgb_image, detection_result):
     print('ano type:', type(annotated_image))
     # Loop through the detected poses to visualize.
     for idx in range(len(pose_landmarks_list)):
-          pose_landmarks = pose_landmarks_list[idx]
+        pose_landmarks = pose_landmarks_list[idx]
 
-    # Draw the pose landmarks.
-          pose_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
-          pose_landmarks_proto.landmark.extend([
-              landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z) for landmark in pose_landmarks
-          ])
-          solutions.drawing_utils.draw_landmarks(
-              rgb_image.numpy_view(),
-              pose_landmarks_proto,
-              solutions.pose.POSE_CONNECTIONS,
-              solutions.drawing_styles.get_default_pose_landmarks_style())
+        # Draw the pose landmarks.
+        pose_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+        pose_landmarks_proto.landmark.extend([
+            landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z) for landmark in pose_landmarks
+        ])
+        solutions.drawing_utils.draw_landmarks(
+            rgb_image.numpy_view(),
+            pose_landmarks_proto,
+            solutions.pose.POSE_CONNECTIONS,
+            solutions.drawing_styles.get_default_pose_landmarks_style())
     return annotated_image
 
 def main():
