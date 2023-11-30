@@ -83,10 +83,8 @@ last_msg = ''
 def set_zero():
     for servo_num in servo_numbers:
         normalized_angle = 0
-
         if servo_num in [2, 13, 14]:
             normalized_angle = 180 - normalized_angle
-            
         kit.servo[servo_num].angle = normalized_angle
         time.sleep(0.001)
 
@@ -111,10 +109,21 @@ def on_message(client, userdata, msg):
     elif message == 'no_land':
         print('no landmarks!')
         set_zero()
-    elif message == 'yes_land':
-        print('landmarks!')
-        for servo_num in servo_numbers:
-            move_servo(servo_num, SERVOMIN, SERVOMAX, 1)
+    elif message == 'left':
+        right_arm = 13
+        move_servo(right_arm, SERVOMAX, SERVOMIN, -1)
+        
+        left_arm = 1
+        move_servo(left_arm, SERVOMIN, SERVOMAX, 1)
+        time.sleep(0.05)
+        
+    elif message == 'right':
+        left_arm = 1
+        move_servo(left_arm, SERVOMAX, SERVOMIN, -1)
+        
+        right_arm = 13
+        move_servo(right_arm, SERVOMIN, SERVOMAX, 1)
+        time.sleep(0.05)            
     last_msg = message
 
 if __name__=="__main__":

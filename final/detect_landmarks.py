@@ -42,19 +42,32 @@ class HumanPoseDetection:
             'farlab.infosci.cornell.edu',
             port=8883)
         self.topic = 'IDD/cool_table/robit'
+        self.init_positions = []
         
     def callback(self, result, output_image, timestamp_ms):
         global DETECTING
         DETECTING = True
         pl = result.pose_landmarks
         print("-"*100)
-        print("pose landmarks:", pl)
+        #print("pose landmarks:", pl)
         if len(pl) == 0:
             print('no landmarks!')
             self.client.publish(self.topic, 'no_land')
         else:
-            print("len:", len(result.pose_landmarks[0]))
-            self.client.publish(self.topic, 'yes_land')
+            print("len:", len(pl[0]))
+            if self.init_positions == []:
+                print('initing')
+                self.init_positions = pl[0]
+            else:
+                left_change = np.abs(pl[0][11].y - self.init_positions[11].y)
+                right_change = np.abs(pl[0][12].y - self.init_positions[12].y)
+                if left_change > right_change:
+                    print('left!')
+                    self.client.publish(self.topic, 'left')
+                else:
+                    print('right!')
+                    self.client.publish(self.topic, 'right')
+
         DETECTING = False
         return
 
