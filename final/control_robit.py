@@ -59,11 +59,11 @@ def test():
         for servo_num in servo_numbers:
             move_servo(servo_num, SERVOMIN, SERVOMAX, 1)
 
-             time.sleep(0.5)
+            time.sleep(0.5)
 
-             move_servo(servo_num, SERVOMAX, SERVOMIN, -1)
+            move_servo(servo_num, SERVOMAX, SERVOMIN, -1)
 
-             time.sleep(0.5)
+            time.sleep(0.5)
 
 
         # Main loop
@@ -79,7 +79,18 @@ Servo num 12 is the right shoulder
 """
 global last_msg
 last_msg = ''
-  
+
+def set_zero():
+    for servo_num in servo_numbers:
+        normalized_angle = 0
+
+        if servo_num in [2, 13, 14]:
+            normalized_angle = 180 - normalized_angle
+            
+        kit.servo[servo_num].angle = normalized_angle
+        time.sleep(0.001)
+
+
 def main():
     client = mqtt.Client(str(uuid.uuid1()))
     client.tls_set(cert_reqs=ssl.CERT_NONE)
@@ -99,10 +110,11 @@ def on_message(client, userdata, msg):
         return
     elif message == 'no_land':
         print('no landmarks!')
-        move_servo(servo_num, SERVOMAX, SERVOMIN, -1)
+        set_zero()
     elif message == 'yes_land':
         print('landmarks!')
-        move_servo(servo_num, SERVOMIN, SERVOMAX, 1)
+        for servo_num in servo_numbers:
+            move_servo(servo_num, SERVOMIN, SERVOMAX, 1)
     last_msg = message
 
 if __name__=="__main__":
