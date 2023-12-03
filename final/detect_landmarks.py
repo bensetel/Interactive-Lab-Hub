@@ -15,7 +15,6 @@ import uuid
 import queue
 
 
-
 model_path = '/home/ben/Interactive-Lab-Hub/final/pose_landmarker_lite.task'
 
 global voter
@@ -48,6 +47,7 @@ class HumanPoseDetection:
         self.topic = 'IDD/cool_table/robit'
         self.init_positions = []
         self.threshold = 0.4
+        
     def callback(self, result, output_image, timestamp_ms):
         global iters
         global voter
@@ -68,45 +68,37 @@ class HumanPoseDetection:
                 right_change = np.abs(pl[0][14].y - self.init_positions[14].y)
                 print('left_change:', left_change)
                 print('right_change:', right_change)
-
-                """
-                x_left_change = np.abs(pl[0][11].x - self.init_positions[11].x)
-                x_right_change = np.abs(pl[0][12].x - self.init_positions[12].x)
-                print('x_left_change:', x_left_change)
-                print('x_right_change:', x_right_change)
-                """
                 if iters > 10:
                     voter = 0
                     iters = 0
+
+                    
                 if (left_change < self.threshold) and (right_change < self.threshold):
                     print('threshold not met')
-
                 elif left_change > right_change:
                     print('left!')
-                    if voter <7:
+                    if voter < 7:
                         voter += 1
-                    print('voter is:', voter)
                 else:
                     print('right!')
                     if voter > -7:
                         voter -= 1
                     print('voter is:', voter)
+                    
                 if voter >= 5:
                     self.client.publish(self.topic, 'left')
                     print('*'*10)
                     print('sent left')
                 elif voter <= -5:
+                    self.client.publish(self.topic, 'right')
                     print('*'*10)
                     print('sent right')
-                    self.client.publish(self.topic, 'right')
-                else:
-                    print('voter is:', voter)
-                    
+
+                print('voter is:', voter)
                 print('iters is:', iters)
                 iters += 1
                 
                 #self.init_positions = pl[0]
-                
         return
 
         

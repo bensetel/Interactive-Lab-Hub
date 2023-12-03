@@ -7,8 +7,9 @@ import numpy as np
 import cv2
 import time
 
-model_path = '/Users/ben/Desktop/Interactive-Lab-Hub/final/pose_landmarker_lite.task'
-
+model_path = '/home/ben/Interactive-Lab-Hub/final/pose_landmarker_lite.task'
+global DETECTING
+DETECTING = False
 
 class HumanPoseDetection:
     def __init__(self):
@@ -26,6 +27,8 @@ class HumanPoseDetection:
         )
         
     def callback(self, result, output_image, timestamp_ms):
+        global DETECTING
+        DETECTING = True
         print("-"*100)
         print("callback called!")
         print("type result:", type(result))
@@ -33,34 +36,37 @@ class HumanPoseDetection:
         print("pose landmarks:", result.pose_landmarks)
 
         #annotated_image = draw_landmarks_on_image(output_image, result)
-        #cv2.imshow('blick', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
-        #cv2.waitKey(0) 
-        #cv2.destroyAllWindows()
+        # cv2.imshow('blick', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
+        # cv2.waitKey(0) 
+        # cv2.destroyAllWindows()
 
         # cv2.imshow('blick', output_image.numpy_view())
         # cv2.waitKey(0) 
         # cv2.destroyAllWindows()
-
         
-
-        # print('ano image!')
-        # print(type(annotated_image))
-        # print(annotated_image.__dir__())
-        # print(annotated_image))
-        time.sleep(1)
+        DETECTING = False
         return
 
         
     def detect_pose(self):
-        cap = cv2.VideoCapture(0)
+        global DETECTING
+        print("detecting pose")
+        cap = cv2.VideoCapture('/dev/video0')
+        print('camera opened')
         with self.PoseLandmarker.create_from_options(self.options) as landmarker:
             while cap.isOpened():
+                if DETECTING:
+                    print('detecting...')
+                    time.sleep(1)
+                    continue
                 _, image = cap.read()
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
                 frame_timestamp_ms = int(time.time() * 1000)
+
                 landmarker.detect_async(mp_image, frame_timestamp_ms)
 
 
+                
 def draw_landmarks_on_image(rgb_image, detection_result):
     pose_landmarks_list = detection_result.pose_landmarks
     annotated_image = np.copy(rgb_image)
@@ -81,18 +87,20 @@ def draw_landmarks_on_image(rgb_image, detection_result):
             solutions.drawing_styles.get_default_pose_landmarks_style())
     return annotated_image
 
+
 def main():
     HPD_ = HumanPoseDetection()
     HPD_.detect_pose()
     return
 
-"""
+
 if __name__=="__main__":
     main()
-"""
 
 
-"""
+
+    """
+
 
     
 def main():
@@ -150,7 +158,7 @@ return
 
 
 
-"""
+    """
 def main():
     img = cv2.imread("image.jpg")
     window_name = 'myimage'
@@ -194,7 +202,7 @@ def main():
 
 """
 
-"""
+    """
 
 def print_result(result: PoseLandmarkerResult, output_image: mp.Image, timestamp_ms: int):
     print('pose landmarker result: {}'.format(result))
@@ -212,7 +220,7 @@ mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=numpy_frame_from_open
 """
 
 
-"""
+    """
     
 cv2.imshow(blick, cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
 
