@@ -13,6 +13,8 @@
 # limitations under the License.
 """Main scripts to run pose landmarker."""
 
+#USE HANDS TO DETECT SHOULDER ROTATION
+
 import argparse
 import sys
 import time
@@ -32,7 +34,9 @@ import paho.mqtt.client as mqtt
 import uuid
 import queue
 
-
+import os
+import glob
+import pandas as pd
 
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
@@ -49,12 +53,56 @@ client.username_pw_set('idd', 'device@theFarm')
 client.connect(
     'farlab.infosci.cornell.edu',
     port=8883)
-topic = 'IDD/cool_table/robit'
-init_positions = []
-threshold = 0.4
-iters = 0
-voter = 0
 
+init_positions = []
+
+iters = 0
+
+#USE HANDS TO DETECT SHOULDER ROTATION
+pose_dict = {
+    # 'nose':0,
+    # 'left_eye_(inner)':1,
+    # 'left_eye':2,
+    # 'left_eye_(outer)':3,
+    # 'right_eye_(inner)':4,
+    # 'right_eye':5,
+    # 'right_eye_(outer)':6,
+    # 'left_ear':7,
+    # 'right_ear':8,
+    # 'mouth_(left)':9,
+    # 'mouth_(right)':10,
+    11:'left_shoulder',
+    12:'right_shoulder',
+    13:'left_elbow',
+    14:'right_elbow',
+    15:'left_wrist',
+    16:'right_wrist',
+    # 'left_pinky':17,
+    # 'right_pinky':18,
+    # 'left_index':19,
+    # 'right_index':20,
+    # 'left_thumb':21,
+    # 'right_thumb':22,
+    # 'left_hip':23,
+    # 'right_hip':24,
+    # 'left_knee':25,
+    # 'right_knee':26,
+    # 'left_ankle':27,
+    # 'right_ankle':28,
+    # 'left_heel':29,
+    # 'right_heel':30,
+    # 'left_foot_index':31,
+    # 'right_foot_index':32
+}
+
+topic_base = 'IDD/cool_table/robit'
+pd_len = len(list(pose_dict.keys()))
+voter = [0] * pd_len
+threshold = [0.1] * pd_len
+
+def pl_landmark_to_angle(pl_landmark):
+    return pl_landmark
+    
 def run(model: str, num_poses: int,
         min_pose_detection_confidence: float,
         min_pose_presence_confidence: float, min_tracking_confidence: float,
@@ -67,7 +115,7 @@ def run(model: str, num_poses: int,
       num_poses: Max number of poses that can be detected by the landmarker.
       min_pose_detection_confidence: The minimum confidence score for pose
         detection to be considered successful.
-      min_pose_presence_confidence: The minimum confidence score of pose
+s      min_pose_presence_confidence: The minimum confidence score of pose
         presence score in the pose landmark detection.
       min_tracking_confidence: The minimum confidence score for the pose
         tracking to be considered successful.
@@ -95,7 +143,7 @@ def run(model: str, num_poses: int,
 
     def save_result(result: vision.PoseLandmarkerResult,
                     unused_output_image: mp.Image, timestamp_ms: int):
-        global FPS, COUNTER, START_TIME, DETECTION_RESULT, iters, voter, client, topic, init_positions, threshold, iters
+        global FPS, COUNTER, START_TIME, DETECTION_RESULT, iters, voter, client, topic, init_positions, threshold, iters, pd_len
 
         # Calculate the FPS
         if COUNTER % fps_avg_frame_count == 0:
@@ -104,53 +152,94 @@ def run(model: str, num_poses: int,
 
         DETECTION_RESULT = result
         COUNTER += 1
-
         pl = result.pose_landmarks
+        #print('pl:', pl)
+        print('COUNTER IS:', COUNTER)
+
+        
+        
         print("-"*100)
-        #print("pose landmarks:", pl)
         if len(pl) == 0:
             print('no landmarks!')
-            client.publish(topic, 'no_land')
+            client.publish(f'{topic_base}/lands', 'no_land')
         else:
             print("len:", len(pl[0]))
             if init_positions == []:
                 print('initing')
                 init_positions = pl[0]
             else:
-                left_change = np.abs(pl[0][13].y - init_positions[13].y)
-                right_change = np.abs(pl[0][14].y - init_positions[14].y)
-                print('left_change:', left_change)
-                print('right_change:', right_change)
                 if iters > 10:
-                    voter = 0
                     iters = 0
+                    voter = [0] * pd_len
+                msg = ''
+                for i,j in zip(list(pose_dict.keys()), range(0, pd_len)):
+                    msg += pose_dict[i] + 'z'
+                    cur_pos = pl[0][i]
+                    #USE HANDS TO DETECT SHOULDER ROTATION
+                    if 'shoulder' in pose_dict[i]:
+                        print('-'*50)
+                        xchange = cur_pos.x - init_positions[i].x
+                        ychange = cur_pos.y - init_positions[i].y
+                        zchange = cur_pos.z - init_positions[i].z
+                        print('change for: ', pose_dict[i], 'x : ', xchange)
+                        print('change for: ', pose_dict[i], 'y : ', ychange)
+                        print('change for: ', pose_dict[i], 'z : ', zchange)
+                        print('-'*50)
+                        fn = f'{pose_dict[i]}_changes.csv'
+                        if not(os.path.isfile(fn)):
+                            f = open(fn, 'w+')
+                            f.write('x,y,z\n')
+                            f.close()
+                            
+                        f = open(fn, 'a')
+                        s = str(xchange) + ',' + str(ychange) + ',' + str(zchange) + '\n'
+                        f.write(s)
+                        f.close()
+                        
+                    angle = pos_to_angle(cur_pos.z, 'z', pose_dict[i])
+                    
 
                     
-                if (left_change < threshold) and (right_change < threshold):
-                    print('threshold not met')
-                elif left_change > right_change:
-                    print('left!')
-                    if voter < 7:
-                        voter += 1
-                else:
-                    print('right!')
-                    if voter > -7:
-                        voter -= 1
+                    """
+                    print('-'*50)
+                    fi = open(f'{pose_dict[i]}.txt', 'a+')
+                    fi.write('\n')
+                    fi.write(repr(pl[0][i]))
+                    fi.close()
+                    print('wrote', pose_dict[i])
+                    #print(f'pl {pose_dict[i]}', pl[0][i])
+                    print('-'*50)
+                    change = pl[0][i].y - init_positions[i].y
+
+                    print('change:', change)
+                    if (np.abs(change) < threshold[j]):
+                        print('threshold not met')
+                    else:
+                        print('met!')
+                        if change > 0:
+                            voter[j] += 1
+                        else:
+                            voter[j] -= 1
+                            
+                    if voter[j] >= 5:
+                        client.publish(f'{topic_base}/{pose_dict[i]}', 1)
+                        print('*'*10)
+                        print(f'sent {pose_dict[i]}, 1')
+                        
+                        
+                    elif voter[j] <= -5:
+                        client.publish(f'{topic_base}/{pose_dict[i]}', -1)
+                        print('*'*10)
+                        print(f'sent {pose_dict[i]}, -1')
+                        
+                    
                     print('voter is:', voter)
-                    
-                if voter >= 5:
-                    client.publish(topic, 'left')
-                    print('*'*10)
-                    print('sent left')
-                elif voter <= -5:
-                    client.publish(topic, 'right')
-                    print('*'*10)
-                    print('sent right')
-
-                print('voter is:', voter)
-                print('iters is:', iters)
+                    print('iters is:', iters)
+                    """
                 iters += 1
-                
+
+    
+        
 
         
 
@@ -229,7 +318,32 @@ def run(model: str, num_poses: int,
     cap.release()
     cv2.destroyAllWindows()
 
+def pos_to_angle(cur_pos, dimension, name):
+    rewrite = False
+    df = pd.read_csv(f'{name}.dat', index_col='names')
+    oldmax = df.loc[dimension]['max']
+    oldmin = df.loc[dimension]['min']
+    
+    if cur_pos > oldmax:
+        angle = 180
+        df.loc[dimension]['max'] = cur_pos
+        rewrite = True
+        
+    elif cur_pos < oldmin:
+        angle = 0
+        df.loc[dimension]['min'] = cur_pos
+        rewrite = True
+        
+    else:
+        angle = ((cur_pos - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
+        
+    if rewrite:
+        df.to_csv(f'{name}.dat')
+    
+    return angle
 
+    
+    
 def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
