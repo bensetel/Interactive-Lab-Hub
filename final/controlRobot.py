@@ -117,18 +117,23 @@ def main():
 
 def on_message(client, userdata, msg):
     global last_msg
+    print('on message!')
     message = msg.payload.decode('UTF-8')
     if message == last_msg:
+        print('== lastmsg')
         return
     elif message == 'no_land':
         print('no landmarks!')
         set_zero()
         time.sleep(0.05)
     else:
+        print('message is:', message)
         todo = message_to_servo_angles(message)
+        print('todo is;', todo)
         for elem in todo:
+            print('elem is:', elem)
             move_servo(elem[0], SERVOMAX, SERVOMIN, elem[1])
-
+            print('called move_servo')
     time.sleep(0.5)
     
 #shoulder rotation should be based on y distance of elbow from shoulder
@@ -136,8 +141,12 @@ def on_message(client, userdata, msg):
         
 def message_to_servo_angles(message):
     landmark_msgs = message.split(LINE_DELIMITER)
-    todo_list = [x.split('#') for x in z if x != '']
-    return [[servo_dict[x[0]], int(x[1])] for x in todo_list]
+    
+    todo_list = [x.split('#') for x in landmark_msgs if x != '']
+    retval = [[servo_dict[x[0]], int(x[1])] for x in todo_list]
+    print('retval:', retval)
+    
+    return retval
 
 
 if __name__=="__main__":
