@@ -32,19 +32,18 @@ def set_servo_pulse(n, pulse):
     kit.servo[n].angle = pulse
 
 
-def move_servo(servo_num, start, end, step):
-    for pulselen in range(start, end, step):
-        # Normalize pulselen to the servo's angle range (0 to 180)
-        normalized_angle = (pulselen - SERVOMIN) / (SERVOMAX - SERVOMIN) * 180
-
-        # Reverse direction for servos 2, 13, and 14
-        if servo_num in [2, 13, 14]:
-            normalized_angle = 180 - normalized_angle
-
-        kit.servo[servo_num].angle = normalized_angle
-        time.sleep(0.001)
-    # print(normalized_angle)
-
+def move_servos(servoNum, startAngle, endAngle):
+    # Determine the direction of movement
+    step = 1 if startAngle < endAngle else -1
+    
+    # Loop from startAngle to endAngle
+    for angle in range(startAngle, endAngle, step):
+        set_servo_pulse(servoNum, angle)
+        time.sleep(0.0001)
+    
+def move_wrapper(servo_num, angle):
+    start = kit.servo[servo_num].angle
+    move_servos(servo_num, start, angle)
 
 # Set all servos to angle 0
 def test():
@@ -133,7 +132,7 @@ def on_message(client, userdata, msg):
         print('todo is;', todo)
         for elem in todo:
             print('elem is:', elem)
-            move_servo(elem[0], SERVOMAX, SERVOMIN, elem[1])
+            move_wrapper(elem[0], elem[1])
             print('called move_servo')
     time.sleep(0.5)
     
