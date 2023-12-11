@@ -94,16 +94,11 @@ pose_dict = {
     # 'left_foot_index':31,
     # 'right_foot_index':32
 }
-reverse_pose_dict = {}
-for elem in [{y:x} for x,y in zip(list(pose_dict.keys()), list(pose_dict.values()))]:
-    reverse_pose_dict.update(elem)
 
-topic = 'IDD/cool_table/robit'
+topic_base = 'IDD/cool_table/robit'
 pd_len = len(list(pose_dict.keys()))
 voter = [0] * pd_len
 threshold = [0.1] * pd_len
-INTERNAL_DELIMITER = '#'
-LINE_DELIMITER = '*'
 
 def pl_landmark_to_angle(pl_landmark):
     return pl_landmark
@@ -140,7 +135,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
     row_size = 50  # pixels
     left_margin = 24  # pixels
     text_color = (0, 0, 0)  # black
-    text_color2 = (255, 255, 255)
     font_size = 1
     font_thickness = 1
     fps_avg_frame_count = 10
@@ -149,7 +143,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
 
     def save_result(result: vision.PoseLandmarkerResult,
                     unused_output_image: mp.Image, timestamp_ms: int):
-        global FPS, COUNTER, START_TIME, DETECTION_RESULT, iters, voter, client, topic, init_positions, threshold, iters, pd_len, INTERNAL_DELIMITER, LINE_DELIMITER
+        global FPS, COUNTER, START_TIME, DETECTION_RESULT, iters, voter, client, topic, init_positions, threshold, iters, pd_len
 
         # Calculate the FPS
         if COUNTER % fps_avg_frame_count == 0:
@@ -163,69 +157,87 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         print('COUNTER IS:', COUNTER)
 
         
-        msg = ''
+        
         print("-"*100)
         if len(pl) == 0:
             print('no landmarks!')
-            msg = 'no_land'
-        else:            
+            client.publish(f'{topic_base}/lands', 'no_land')
+        else:
+            print("len:", len(pl[0]))
             if init_positions == []:
                 print('initing')
                 init_positions = pl[0]
             else:
-                lsnum = reverse_pose_dict['left_shoulder']
-                rsnum = reverse_pose_dict['right_shoulder']
-                lenum = reverse_pose_dict['left_elbow']
-                renum = reverse_pose_dict['right_elbow']
-                print('#'*50)
-                print('lenum:', lsnum)
-                print('rsnum:', rsnum)
-                print('lenum:', lenum)
-                print('renum:', renum)
-                print('#'*50)
-                left_shoulder_lm = pl[0][lsnum]
-                right_shoulder_lm = pl[0][reverse_pose_dict['right_shoulder']]
-                left_elbow_lm = pl[0][reverse_pose_dict['left_elbow']]
-                right_elbow_lm = pl[0][reverse_pose_dict['right_elbow']]
-                print('#'*50)
-                print('le_lm:', left_shoulder_lm)
-                print('rs_lm:', right_shoulder_lm)
-                print('le_lm:', left_elbow_lm)
-                print('re_lm:', right_elbow_lm)
-                print('#'*50)
-                #shoulder rotation should be based on y distance of elbow from shoulder
-                #next servo out should be x distance from elbow to shoulder
-
-                print('#'*50)
-                left_shoulder_to_rotate = np.abs(left_shoulder_lm.y - left_elbow_lm.y)
-
-                
-                print('ls:', left_shoulder_to_rotate) 
-                right_shoulder_to_rotate = np.abs(right_shoulder_lm.y - right_elbow_lm.y)
-                print('rs:', right_shoulder_to_rotate) 
-                left_elbow_to_rotate = np.abs(left_shoulder_lm.x - left_elbow_lm.x)
-                print('le:', left_elbow_to_rotate) 
-                right_elbow_to_rotate = np.abs(right_shoulder_lm.x - right_elbow_lm.x)
-                print('re:', right_elbow_to_rotate)
-                print('#'*50)
-                ls_angle = pos_to_angle(left_shoulder_to_rotate, 'y', height, 'left_shoulder')
-                rs_angle = pos_to_angle(right_shoulder_to_rotate, 'y', height, 'right_shoulder')
-                le_angle = pos_to_angle(left_elbow_to_rotate, 'x', width, 'left_shoulder')
-                re_angle = pos_to_angle(right_elbow_to_rotate, 'x', width, 'right_shoulder')
-
-                msg += 'left_shoulder' + INTERNAL_DELIMITER + str(ls_angle) + LINE_DELIMITER + 'right_shoulder' + INTERNAL_DELIMITER + str(rs_angle) + LINE_DELIMITER + 'left_elbow' + INTERNAL_DELIMITER + str(le_angle) + LINE_DELIMITER + 'right_elbow' + INTERNAL_DELIMITER + str(re_angle) + LINE_DELIMITER
-                
-                """
+                if iters > 10:
+                    iters = 0
+                    voter = [0] * pd_len
+                msg = ''
                 for i,j in zip(list(pose_dict.keys()), range(0, pd_len)):
+                    msg += pose_dict[i] + 'z'
                     cur_pos = pl[0][i]
                     #USE HANDS TO DETECT SHOULDER ROTATION
-                    xangle = pos_to_angle(cur_pos.x, 'x', width, pose_dict[i])
-                    yangle = pos_to_angle(cur_pos.x, 'y', height, pose_dict[i])
-                    msg += pose_dict[i] + INTERNAL_DELIMITER + str(xangle) + INTERNAL_DELIMITER + str(yangle) + LINE_DELIMITER
+                    if 'shoulder' in pose_dict[i]:
+                        print('-'*50)
+                        xchange = cur_pos.x - init_positions[i].x
+                        ychange = cur_pos.y - init_positions[i].y
+                        zchange = cur_pos.z - init_positions[i].z
+                        print('change for: ', pose_dict[i], 'x : ', xchange)
+                        print('change for: ', pose_dict[i], 'y : ', ychange)
+                        print('change for: ', pose_dict[i], 'z : ', zchange)
+                        print('-'*50)
+                        fn = f'{pose_dict[i]}_changes.csv'
+                        if not(os.path.isfile(fn)):
+                            f = open(fn, 'w+')
+                            f.write('x,y,z\n')
+                            f.close()
+                            
+                        f = open(fn, 'a')
+                        s = str(xchange) + ',' + str(ychange) + ',' + str(zchange) + '\n'
+                        f.write(s)
+                        f.close()
+                        
+                    angle = pos_to_angle(cur_pos.z, 'z', pose_dict[i])
                     
+
+                    
+                    """
+                    print('-'*50)
+                    fi = open(f'{pose_dict[i]}.txt', 'a+')
+                    fi.write('\n')
+                    fi.write(repr(pl[0][i]))
+                    fi.close()
+                    print('wrote', pose_dict[i])
+                    #print(f'pl {pose_dict[i]}', pl[0][i])
+                    print('-'*50)
+                    change = pl[0][i].y - init_positions[i].y
+
+                    print('change:', change)
+                    if (np.abs(change) < threshold[j]):
+                        print('threshold not met')
+                    else:
+                        print('met!')
+                        if change > 0:
+                            voter[j] += 1
+                        else:
+                            voter[j] -= 1
+                            
+                    if voter[j] >= 5:
+                        client.publish(f'{topic_base}/{pose_dict[i]}', 1)
+                        print('*'*10)
+                        print(f'sent {pose_dict[i]}, 1')
+                        
+                        
+                    elif voter[j] <= -5:
+                        client.publish(f'{topic_base}/{pose_dict[i]}', -1)
+                        print('*'*10)
+                        print(f'sent {pose_dict[i]}, -1')
+                        
+                    
+                    print('voter is:', voter)
+                    print('iters is:', iters)
+                    """
                 iters += 1
-                """
-        client.publish(topic, msg)
+
     
         
 
@@ -272,7 +284,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         if DETECTION_RESULT:
             # Draw landmarks.
             for pose_landmarks in DETECTION_RESULT.pose_landmarks:
-                
                 # Draw the pose landmarks.
                 pose_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
                 pose_landmarks_proto.landmark.extend([
@@ -280,47 +291,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                                                     z=landmark.z) for landmark
                     in pose_landmarks
                 ])
-
-                # Draw landmarks and coordinates
-                for i, landmark in enumerate(pose_landmarks_proto.landmark):
-                    x_coord = int(landmark.x * width)
-                    y_coord = int(landmark.y * height)
-                    z_coord = landmark.z
-
-                    # Display coordinates next to the landmark
-                    if i == 11: #left shoulder
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
-                   
-                    if i == 12: #right shoulder
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
-                        
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
-
-                    if i == 13: #left elbow
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
-                    
-                    if i == 14: #right elbow
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
-
                 mp_drawing.draw_landmarks(
                     current_frame,
                     pose_landmarks_proto,
@@ -348,11 +318,11 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
     cap.release()
     cv2.destroyAllWindows()
 
-def pos_to_angle(cur_pos, dimension, coeff, name):
+def pos_to_angle(cur_pos, dimension, name):
     rewrite = False
     df = pd.read_csv(f'{name}.dat', index_col='names')
-    oldmax = df.loc[dimension]['max'] * coeff
-    oldmin = df.loc[dimension]['min'] * coeff
+    oldmax = df.loc[dimension]['max']
+    oldmin = df.loc[dimension]['min']
     
     if cur_pos > oldmax:
         angle = 180
@@ -365,12 +335,12 @@ def pos_to_angle(cur_pos, dimension, coeff, name):
         rewrite = True
         
     else:
-        angle = (((cur_pos * coeff) - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
+        angle = ((cur_pos - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
         
     if rewrite:
         df.to_csv(f'{name}.dat')
     
-    return round(angle)
+    return angle
 
     
     
