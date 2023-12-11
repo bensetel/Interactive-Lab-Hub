@@ -129,7 +129,8 @@ def on_message(client, userdata, msg):
         for elem in todo:
             move_servo(elem[0], SERVOMAX, SERVOMIN, elem[1])
 
-
+    time.sleep(0.5)
+    
 #shoulder rotation should be based on y distance of elbow from shoulder
 #next servo out should be x distance from elbow to shoulder
         
