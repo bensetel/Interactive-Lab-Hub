@@ -6,7 +6,9 @@ import uuid
 import queue
 import ssl
 
-from detect import INTERNAL_DELIMITER, LINE_DELIMITER
+#from detect import INTERNAL_DELIMITER, LINE_DELIMITER
+INTERNAL_DELIMITER = '#'
+LINE_DELIMITER = '*'
 
 # Create a servo kit object with 16 channels
 kit = ServoKit(channels=16, frequency=60)
@@ -121,7 +123,6 @@ def on_message(client, userdata, msg):
     message = msg.payload.decode('UTF-8')
     if message == last_msg:
         print('== lastmsg')
-        return
     elif message == 'no_land':
         print('no landmarks!')
         set_zero()
@@ -140,6 +141,9 @@ def on_message(client, userdata, msg):
 #next servo out should be x distance from elbow to shoulder
         
 def message_to_servo_angles(message):
+    print('message to servo angles')
+    print('message is:', message)
+    
     landmark_msgs = message.split(LINE_DELIMITER)
     
     todo_list = [x.split('#') for x in landmark_msgs if x != '']
