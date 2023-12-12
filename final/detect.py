@@ -110,6 +110,7 @@ LINE_DELIMITER = '*'
 SHOULDER_RANGE = [100, 170]
 LFLEXOR_XZ_RANGE = [0.8, 4.0]
 LFLEXOR_XY_RANGE = [-15, 15]
+HEAD_RANGE = [0, 200]
 
 def pl_landmark_to_angle(pl_landmark):
     return pl_landmark
@@ -165,8 +166,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         DETECTION_RESULT = result
         COUNTER += 1
         pl = result.pose_landmarks
-        #print('pl:', pl)
-
         
         msg = ''
         print("-"*100)
@@ -206,9 +205,11 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             rflangle_xy = trig_angle_to_servo_angle(rflexor_xy_angle, 'lflexor_xy')
 
             head = (lands[0].x*width - lands[12].x*width)
-
+            hangle = min(0, max(round(trig_angle_to_servo_angle(head, 'head')), 180))
+            
             print('#'*50)
             print('head is:', head)
+            print('hangle is:', hangle)
             """
             print('#'*50)
             #print('LFANGLE IS:', lflangle)
@@ -269,7 +270,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
 
             
             msg = ''
-            msg += 'left_shoulder' + INTERNAL_DELIMITER + str(lshangle) + LINE_DELIMITER + 'right_shoulder' + INTERNAL_DELIMITER + str(rshangle) + LINE_DELIMITER + 'left_elbow' + INTERNAL_DELIMITER + str(lflangle) + LINE_DELIMITER + 'right_elbow' + INTERNAL_DELIMITER + str(rflangle) + LINE_DELIMITER
+            msg += 'left_shoulder' + INTERNAL_DELIMITER + str(lshangle) + LINE_DELIMITER + 'right_shoulder' + INTERNAL_DELIMITER + str(rshangle) + LINE_DELIMITER + 'left_elbow' + INTERNAL_DELIMITER + str(lflangle) + LINE_DELIMITER + 'right_elbow' + INTERNAL_DELIMITER + str(rflangle) + LINE_DELIMITER + 'head' + INTERNAL_DELIMITER + str(hangle) + LINE_DELIMITER
 
             
             
@@ -410,8 +411,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         if cv2.waitKey(1) == 27:
             break
         
-        time.sleep(0.05)
-
     detector.close()
     cap.release()
     cv2.destroyAllWindows()
@@ -481,85 +480,6 @@ def main():
 #############
 # MATH SECTION
 ###############
-
-    # left_shoulder_lm = landmarks[reverse_pose_dict['left_shoulder']]
-    # right_shoulder_lm = landmarks[reverse_pose_dict['right_shoulder']]
-    # left_elbow_lm = pl[0][reverse_pose_dict['left_elbow']]
-    # right_elbow_lm = pl[0][reverse_pose_dict['right_elbow']]
-    
-    # #shoulder rotation should be based on y distance of elbow from shoulder
-    # #next servo out should be x distance from elbow to shoulder
-    
-    # left_shoulder_to_rotate = np.abs(left_shoulder_lm.y - left_elbow_lm.y)
-    
-    # right_shoulder_to_rotate = np.abs(right_shoulder_lm.y - right_elbow_lm.y)
-    # left_elbow_to_rotate = np.abs(left_shoulder_lm.x - left_elbow_lm.x)
-    # right_elbow_to_rotate = np.abs(right_shoulder_lm.x - right_elbow_lm.x)
-    
-    # ls_angle = pos_to_angle(left_shoulder_to_rotate, 'y', height, 'left_shoulder')
-    # rs_angle = pos_to_angle(right_shoulder_to_rotate, 'y', height, 'right_shoulder')
-    # le_angle = pos_to_angle(left_elbow_to_rotate, 'x', width, 'left_shoulder')
-    # re_angle = pos_to_angle(right_elbow_to_rotate, 'x', width, 'right_shoulder')
-    
-    # msg += 'left_shoulder' + INTERNAL_DELIMITER + str(ls_angle) + LINE_DELIMITER + 'right_shoulder' + INTERNAL_DELIMITER + str(rs_angle) + LINE_DELIMITER + 'left_elbow' + INTERNAL_DELIMITER + str(le_angle) + LINE_DELIMITER + 'right_elbow' + INTERNAL_DELIMITER + str(re_angle) + LINE_DELIMITER
- 
-
-def pos_to_angle(cur_pos, dimension, coeff, name):
-    rewrite = False
-    df = pd.read_csv(f'{name}.dat', index_col='names')
-    oldmax = df.loc[dimension]['max'] * coeff
-    oldmin = df.loc[dimension]['min'] * coeff
-    
-    if cur_pos > oldmax:
-        angle = 180
-        df.loc[dimension]['max'] = cur_pos
-        rewrite = True
-        
-    elif cur_pos < oldmin:
-        angle = 0
-        df.loc[dimension]['min'] = cur_pos
-        rewrite = True
-        
-    else:
-        angle = (((cur_pos * coeff) - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
-        
-    if rewrite:
-        df.to_csv(f'{name}.dat')
-    
-    return round(angle)
-
-
-def calc_magnitude_ratio(landmarks1, landmarks2, dims):
-    if dims == ['x', 'y']:
-        a1, b1 = landmarks1[0].x, landmarks1[0].y
-        a2, b2 = landmarks1[1].x, landmarks1[1].y
-
-        a3, b3 = landmarks2[0].x, landmarks2[0].y
-        a4, b4 = landmarks2[1].x, landmarks2[1].y
-        
-    elif dims == ['y', 'z']:
-        a1, b1 = landmarks1[0].y, landmarks1[0].z
-        a2, b2 = landmarks1[1].y, landmarks1[1].z
-
-        a3, b3 = landmarks2[0].y, landmarks2[0].z
-        a4, b4 = landmarks2[1].y, landmarks2[1].z
-
-    elif dims == ['x', 'z']:
-        a1, b1 = landmarks1[0].x, landmarks1[0].z
-        a2, b2 = landmarks1[1].x, landmarks1[1].z
-
-        a3, b3 = landmarks2[0].x, landmarks2[0].z
-        a4, b4 = landmarks2[1].x, landmarks2[1].z
-    # Calculate vectors
-    vector1 = (a1 - a2, b1 - b2)
-    vector2 = (a3 - a4, b3 - b4)
-    
-    # magnitude1 = math.sqrt(vector1[0]**2 + vector1[1]**2)
-    # magnitude2 = math.sqrt(vector2[0]**2 + vector2[1]**2)
-
-    return vector1[0]/vector2[0]
-
-#def calculate_angle(landmark1, landmark2, landmark3): #
 def calculate_angle(landmarks1, landmarks2, dims):
     if dims == ['x', 'y']:
         a1, b1 = landmarks1[0].x, landmarks1[0].y
@@ -607,24 +527,17 @@ def trig_angle_to_servo_angle(trig_angle, servo_name):
         oldmin = SHOULDER_RANGE[0]
         oldmax = SHOULDER_RANGE[1]
     elif 'lflexor_xz' in servo_name:
-        print('xz!')
         oldmin = LFLEXOR_XZ_RANGE[0]
         oldmax = LFLEXOR_XZ_RANGE[1]
     elif 'lflexor_xy' in servo_name:
-        print('xy!')
         oldmin = LFLEXOR_XY_RANGE[0]
         oldmax = LFLEXOR_XY_RANGE[1]
+    elif 'head' in servo_name:
+        oldmin = HEAD_RANGE[0]
+        oldmax = HEAD_RANGE[1]
         
     servo_angle = ((trig_angle - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
     return servo_angle
-
-# Example usage:
-# landmark1 = (x1, y1)  # Replace with actual landmark coordinates
-# landmark2 = (x2, y2)  # Replace with actual landmark coordinates
-# landmark3 = (x3, y3)  # Replace with actual landmark coordinates
-
-# angle = calculate_angle(landmark1, landmark2, landmark3)
-# print(f"Angle: {angle} degrees")
 
     
 if __name__ == '__main__':

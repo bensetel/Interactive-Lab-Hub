@@ -20,7 +20,7 @@ SERVOMIN = 150  # this is the 'minimum' pulse length count (out of 4096)
 SERVOMAX = 600  # this is the 'maximum' pulse length count (out of 4096)
 
 # Servo numbers for each servo at angle 0
-servo = [0, 1, 2, 12, 13, 14]
+servo = [0, 1, 2, 3, 12, 13, 14]
 
 
 """
@@ -32,6 +32,8 @@ Servo num 14 is the right hand
 Servo num 13 is the right elbow
 Servo num 12 is the right shoulder
 
+Servo num 3 is the head
+
 """
 
 servo_dict = {
@@ -41,15 +43,20 @@ servo_dict = {
     'right_hand':14,
     'right_elbow':13,
     'right_shoulder':12,
+    'head':3
 }
 
 global last_msg
 last_msg = ''
 
+HEAD_BUFFER = 15
+
 # Function to initialize all servos to the 0 position
 def initialize_servos():
     print("INITIALIZING")
     for servo_num in servo:
+        if servo_num == 3:
+            set_servo_pulse(servo_num, 90)
         set_servo_pulse(servo_num, 0)
 
 def set_servo_pulse(n, angle):
@@ -59,25 +66,6 @@ def set_servo_pulse(n, angle):
         angle = 180 - angle
     kit.servo[n].angle = angle
     time.sleep(0.01)
-
-def move_servos(servoNum, startAngle, endAngle):
-    # Determine the direction of movement
-
-    # print("Got ServoNum", servoNum, " startAngle = ", startAngle, " endAngle= ", endAngle)
-    step = 1 if startAngle <= endAngle else -1
-    # print(type(startAngle))
-    # print(type(endAngle))
-
-    # Loop from startAngle to endAngle
-    for angle in range(startAngle, endAngle, step):
-        set_servo_pulse(servoNum, angle)
-        time.sleep(0.001)
-        
-def move_wrapper(servo_num, angle):
-
-    # print("SERVO_NUM =", servo_num)
-    start = round(kit.servo[servo_num].angle)
-    move_servos(servo_num, start, angle)
 
 def message_to_servo_angles(message):
     # print('message to servo angles')
@@ -129,10 +117,20 @@ def on_message(client, userdata, msg):
         # print('todo is;', todo)
         for servo_num, angle in todo:
             angle = max(0, min(180, angle))
-            if servo_num in [2, 13, 14]:
+            if servo_num == 3:
+                small = 90 - HEAD_BUFFER
+                big = 90 + HEAD_BUFFER
+                if (angle > small) and (angle < big):
+                    angle = 90
+                else:
+                    if angle > big:
+                        angle -= HEAD_BUFFER
+                    else:
+                        angle += HEAD_BUFFER
+                        
+            elif servo_num in [2, 13, 14]:
                 angle = 180 - angle 
             kit.servo[servo_num].angle = angle 
-    time.sleep(0.05)
     
 #shoulder rotation should be based on y distance of elbow from shoulder
 #next servo out should be x distance from elbow to shoulder
@@ -140,3 +138,27 @@ def on_message(client, userdata, msg):
 
 if __name__=="__main__":
     main()
+
+""""
+OLD STUFF
+
+
+def move_servos(servoNum, startAngle, endAngle):
+    # Determine the direction of movement
+
+    # print("Got ServoNum", servoNum, " startAngle = ", startAngle, " endAngle= ", endAngle)
+    step = 1 if startAngle <= endAngle else -1
+    # print(type(startAngle))
+    # print(type(endAngle))
+
+    # Loop from startAngle to endAngle
+    for angle in range(startAngle, endAngle, step):
+        set_servo_pulse(servoNum, angle)
+        time.sleep(0.001)
+        
+def move_wrapper(servo_num, angle):
+
+    # print("SERVO_NUM =", servo_num)
+    start = round(kit.servo[servo_num].angle)
+    move_servos(servo_num, start, angle)
+"""
