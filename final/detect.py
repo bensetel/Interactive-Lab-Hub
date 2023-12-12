@@ -114,6 +114,7 @@ SHOULDER_RANGE = [100, 170]
 LFLEXOR_XZ_RANGE = [0.8, 4.0]
 LFLEXOR_XY_RANGE = [-15, 15]
 HEAD_RANGE = [0, 200]
+HAND_RANGE = [0, 1]
 
 def pl_landmark_to_angle(pl_landmark):
     return pl_landmark
@@ -123,8 +124,7 @@ q = queue.Queue()
 
 def callback(indata, frames, time, status):
     """This is called (from a separate thread) for each audio block."""
-    if status:
-        print(status, file=sys.stderr)
+    
     q.put(bytes(indata))
     
 def run(model: str, num_poses: int,
@@ -180,9 +180,9 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         pl = result.pose_landmarks
         
         msg = ''
-        print("-"*100)
+        #print("-"*100)
         if len(pl) == 0:
-            print('no landmarks!')
+            #print('no landmarks!')
             msg = 'no_land'
         else:            
             if init_positions == []:
@@ -220,15 +220,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             hangle = round(trig_angle_to_servo_angle(head, 'head'))
             hangle = 180 - max(0, min(180, hangle))
 
-            lwrist = lands[16]
-            rwrist = lands[15]
-            lindex = lands[20]
-            rindex = lands[19]
-            
-            #wrist-to-index against wrist-to-elbow
-            
-            #Lhand = 
-            #rhand = 
             
             
             """
@@ -286,8 +277,55 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             elif rshangle > 180:
                 rshangle = 180
                 
-            #print('ANGLE IS:', rshangle)
-            #print('#'*50)
+
+
+            
+            # lwrist = lands[16]
+            # rwrist = lands[15]
+            # lindex = lands[20]
+            # rindex = lands[19]
+            
+            # #wrist-to-index against wrist-to-elbow
+            # lhand_xz_angle = (lands[14].x*width - lands[20].x*width)/(lands[8].x*width - lands[7].x*width)
+            # lhand_xy_angle = (lands[14].y*height - lands[20].y*height)/(lands[0].y*height - lands[10].y*height)    
+
+            # rhand_xz_angle = (lands[13].x*width - lands[19].x*width)/(lands[7].x*width - lands[8].x*width)
+            # rhand_xy_angle = (lands[13].y*height - lands[19].y*height)/(lands[0].y*height - lands[9].y*height)    
+
+            # lhand_xz = trig_angle_to_servo_angle(lhand_xz_angle, 'lhand_xz')
+            # lhand_xy = trig_angle_to_servo_angle(lhand_xy_angle, 'lhand_xy')
+
+            # rhand_xz = trig_angle_to_servo_angle(rhand_xz_angle, 'lhand_xz')
+            # rhand_xy = trig_angle_to_servo_angle(rhand_xy_angle, 'lhand_xy')
+
+            # lhand = round(max(0, min(((90 - lflangle)/90 * lhand_xy + lflangle/90 * lhand_xz), 180))/2)
+            # rhand = round(max(0, min(((90 - rflangle)/90 * rhand_xy + rflangle/90 * rhand_xz), 180))/2)
+
+            
+            # print('#'*50)
+            # print('pinkie to thumb x:', round(lands[18].x*width - lands[22].x*width))
+            # print('pinkie to thumb y:', round(lands[18].y*width - lands[22].y*width))
+            # print('-'*10)
+            # print('pinkie to wrist x:', round(lands[18].x*width - lands[16].x*width))
+            # print('pinkie to wrist y:', round(lands[18].y*width - lands[16].y*width))
+            # print('wrist to index x:', round(lands[14].x*width - lands[20].x*width))
+            # print('wrist to index y:', round(lands[14].y*height- lands[20].y*height))
+            # print('index x:', round(lands[20].x*width))
+            # print('index y:', round(lands[20].y*height))
+            # print('wrist x:', round(lands[14].x*width))
+            # print('wrist y:', round(lands[14].y*height))
+            #print("lhand_xy_angle is:", round(lhand_xy_angle * 100))
+            #print("lhand_xz_angle is:", round(lhand_xz_angle * 100))
+            # print("lhand_xz is:", lhand_xz)
+            # print("lhand_xy is:", lhand_xy)
+            # print("lhand is:", lhand)
+            
+            # print('-'*50)
+            # print("rhand_xy_angle is:", rhand_xy_angle * 100)
+            # print("rhand_xz_angle is:", rhand_xz_angle * 100)
+            # print("rhand_xz is:", rhand_xz)
+            # print("rhand_xy is:", rhand_xy)
+            # print("rhand is:", rhand)
 
             
             msg = ''
@@ -331,9 +369,10 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
     
     
     while True:
-        print('new input stream')
+        #print('new input stream')
         with sd.RawInputStream(samplerate=samplerate, blocksize = 8000, device=None,
             dtype="int16", channels=1, callback=callback):
+            q.queue.clear()
             
             # Continuously capture images from the camera and run inference
             while cap.isOpened():
@@ -351,7 +390,8 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                     tmp = rec.AcceptWaveform(sdata)
                     if tmp:
                         res = rec.Result()
-                        msg = '&' + res.split(':')[1].split("}")[0] 
+                        msg = '&' + res.split(':')[1].split("}")[0]
+                        print('msg is:', msg)
                         client.publish(topic, msg)
                         if ticks > 5:
                             send_next = False
@@ -600,7 +640,10 @@ def trig_angle_to_servo_angle(trig_angle, servo_name):
     elif 'head' in servo_name:
         oldmin = HEAD_RANGE[0]
         oldmax = HEAD_RANGE[1]
-        
+    elif 'hand' in servo_name:
+        oldmin = HAND_RANGE[0]
+        oldmax = HAND_RANGE[1]
+            
     servo_angle = ((trig_angle - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
     return servo_angle
 
