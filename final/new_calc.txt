@@ -1,0 +1,23 @@
+2 + 12: shoulders
+1 + 13: flexor
+
+up/down arms motion:
+- compare line across chest to line between shoulder and elbow (x + y values)
+  -- left version of that controls servo 2 + 1
+  -- right version of that controls servo 12 + 13
+
+shoulder rotation motion:
+- compare line from thumb to wrist (22 to 16 e.g.) to line between wrist and elbow (16 to 14 e.g.) (x + y values)
+-- servo 2 and 12
+
+in/out of the screen motion:
+- compare line across chest to line between shoulder and elbow (x + z values)
+-------
+shoulder:
+- arm moving from full forward in/out to full up (zero in/out, max y value, min x value) - track 0-11 line against 12-14 line (y/z values of each of those lines)
+
+flexor, shoulder at 0: 
+- shoulder-to-shoulder to shoulder-to-elbow/wrist (x/y values)
+
+flexor, shoulder at 90:
+- shoulder-to-shoulder to shoulder-to-elbow/wrist (x/z values)

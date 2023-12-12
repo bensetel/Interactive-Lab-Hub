@@ -37,6 +37,8 @@ import queue
 import os
 import glob
 import pandas as pd
+import math
+
 
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
@@ -79,8 +81,8 @@ pose_dict = {
     16:'right_wrist',
     # 'left_pinky':17,
     # 'right_pinky':18,
-    # 'left_index':19,
-    # 'right_index':20,
+    19:'left_index',
+    20:'right_index',
     # 'left_thumb':21,
     # 'right_thumb':22,
     # 'left_hip':23,
@@ -172,65 +174,24 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             if init_positions == []:
                 print('initing')
                 init_positions = pl[0]
+                msg = 'init'
             else:
-                lsnum = reverse_pose_dict['left_shoulder']
-                rsnum = reverse_pose_dict['right_shoulder']
-                lenum = reverse_pose_dict['left_elbow']
-                renum = reverse_pose_dict['right_elbow']
-                print('#'*50)
-                print('lenum:', lsnum)
-                print('rsnum:', rsnum)
-                print('lenum:', lenum)
-                print('renum:', renum)
-                print('#'*50)
-                left_shoulder_lm = pl[0][lsnum]
-                right_shoulder_lm = pl[0][reverse_pose_dict['right_shoulder']]
-                left_elbow_lm = pl[0][reverse_pose_dict['left_elbow']]
-                right_elbow_lm = pl[0][reverse_pose_dict['right_elbow']]
-                print('#'*50)
-                print('le_lm:', left_shoulder_lm)
-                print('rs_lm:', right_shoulder_lm)
-                print('le_lm:', left_elbow_lm)
-                print('re_lm:', right_elbow_lm)
-                print('#'*50)
-                #shoulder rotation should be based on y distance of elbow from shoulder
-                #next servo out should be x distance from elbow to shoulder
-
-                print('#'*50)
-                left_shoulder_to_rotate = np.abs(left_shoulder_lm.y - left_elbow_lm.y)
-
-                
-                print('ls:', left_shoulder_to_rotate) 
-                right_shoulder_to_rotate = np.abs(right_shoulder_lm.y - right_elbow_lm.y)
-                print('rs:', right_shoulder_to_rotate) 
-                left_elbow_to_rotate = np.abs(left_shoulder_lm.x - left_elbow_lm.x)
-                print('le:', left_elbow_to_rotate) 
-                right_elbow_to_rotate = np.abs(right_shoulder_lm.x - right_elbow_lm.x)
-                print('re:', right_elbow_to_rotate)
-                print('#'*50)
-                ls_angle = pos_to_angle(left_shoulder_to_rotate, 'y', height, 'left_shoulder')
-                rs_angle = pos_to_angle(right_shoulder_to_rotate, 'y', height, 'right_shoulder')
-                le_angle = pos_to_angle(left_elbow_to_rotate, 'x', width, 'left_shoulder')
-                re_angle = pos_to_angle(right_elbow_to_rotate, 'x', width, 'right_shoulder')
-
-                msg += 'left_shoulder' + INTERNAL_DELIMITER + str(ls_angle) + LINE_DELIMITER + 'right_shoulder' + INTERNAL_DELIMITER + str(rs_angle) + LINE_DELIMITER + 'left_elbow' + INTERNAL_DELIMITER + str(le_angle) + LINE_DELIMITER + 'right_elbow' + INTERNAL_DELIMITER + str(re_angle) + LINE_DELIMITER
-                
-                """
-                for i,j in zip(list(pose_dict.keys()), range(0, pd_len)):
-                    cur_pos = pl[0][i]
-                    #USE HANDS TO DETECT SHOULDER ROTATION
-                    xangle = pos_to_angle(cur_pos.x, 'x', width, pose_dict[i])
-                    yangle = pos_to_angle(cur_pos.x, 'y', height, pose_dict[i])
-                    msg += pose_dict[i] + INTERNAL_DELIMITER + str(xangle) + INTERNAL_DELIMITER + str(yangle) + LINE_DELIMITER
-                    
-                iters += 1
-                """
+                msg = generate_message(pl[0])
+            #calc shoulder
+            lands = pl[0]
+            lm1 = [lands[0], lands[11]]
+            lm2 = [lands[12], lands[14]]
+            angle = calculate_angle(lm1, lm2, ['y', 'z'])
+            print('#'*50)
+            print('ANGLE IS:', angle)
+            print('#'*50)
+                        
         client.publish(topic, msg)
-    
         
 
         
 
+        
     # Initialize the pose landmarker model
     base_options = python.BaseOptions(model_asset_path=model)
     options = vision.PoseLandmarkerOptions(
@@ -296,7 +257,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                                     cv2.FONT_HERSHEY_SIMPLEX,
                                     font_size, text_color2, font_thickness, cv2.LINE_AA)
                    
-                    if i == 12: #right shoulder
+                    elif i == 12: #right shoulder
                         y_shift = -110
                         coord_text = f'({x_coord}, {y_coord})'
                         
@@ -305,7 +266,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                                     cv2.FONT_HERSHEY_SIMPLEX,
                                     font_size, text_color2, font_thickness, cv2.LINE_AA)
 
-                    if i == 13: #left elbow
+                    elif i == 13: #left elbow
                         y_shift = -110
                         coord_text = f'({x_coord}, {y_coord})'
                         coord_location = (x_coord, y_coord + y_shift)
@@ -313,14 +274,30 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                                     cv2.FONT_HERSHEY_SIMPLEX,
                                     font_size, text_color2, font_thickness, cv2.LINE_AA)
                     
-                    if i == 14: #right elbow
+                    elif i == 14: #right elbow
                         y_shift = -110
                         coord_text = f'({x_coord}, {y_coord})'
                         coord_location = (x_coord, y_coord + y_shift)
                         cv2.putText(current_frame, coord_text, coord_location,
                                     cv2.FONT_HERSHEY_SIMPLEX,
                                     font_size, text_color2, font_thickness, cv2.LINE_AA)
-
+                    
+                    elif i == 19: #left index finger
+                        y_shift = -110
+                        coord_text = f'({x_coord}, {y_coord})'
+                        coord_location = (x_coord, y_coord + y_shift)
+                        cv2.putText(current_frame, coord_text, coord_location,
+                                    cv2.FONT_HERSHEY_SIMPLEX,
+                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
+                        
+                    elif i == 20: #right index finger
+                        y_shift = -110
+                        coord_text = f'({x_coord}, {y_coord})'
+                        coord_location = (x_coord, y_coord + y_shift)
+                        cv2.putText(current_frame, coord_text, coord_location,
+                                    cv2.FONT_HERSHEY_SIMPLEX,
+                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
+ 
                 mp_drawing.draw_landmarks(
                     current_frame,
                     pose_landmarks_proto,
@@ -343,34 +320,12 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         # Stop the program if the ESC key is pressed.
         if cv2.waitKey(1) == 27:
             break
+        
+        time.sleep(0.1)
 
     detector.close()
     cap.release()
     cv2.destroyAllWindows()
-
-def pos_to_angle(cur_pos, dimension, coeff, name):
-    rewrite = False
-    df = pd.read_csv(f'{name}.dat', index_col='names')
-    oldmax = df.loc[dimension]['max'] * coeff
-    oldmin = df.loc[dimension]['min'] * coeff
-    
-    if cur_pos > oldmax:
-        angle = 180
-        df.loc[dimension]['max'] = cur_pos
-        rewrite = True
-        
-    elif cur_pos < oldmin:
-        angle = 0
-        df.loc[dimension]['min'] = cur_pos
-        rewrite = True
-        
-    else:
-        angle = (((cur_pos * coeff) - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
-        
-    if rewrite:
-        df.to_csv(f'{name}.dat')
-    
-    return round(angle)
 
     
     
@@ -434,6 +389,107 @@ def main():
         args.outputSegmentationMasks,
         int(args.cameraId), args.frameWidth, args.frameHeight)
 
+#############
+# MATH SECTION
+###############
+def generate_message(landmarks):
+    
+    return ''
 
+    # left_shoulder_lm = landmarks[reverse_pose_dict['left_shoulder']]
+    # right_shoulder_lm = landmarks[reverse_pose_dict['right_shoulder']]
+    # left_elbow_lm = pl[0][reverse_pose_dict['left_elbow']]
+    # right_elbow_lm = pl[0][reverse_pose_dict['right_elbow']]
+    
+    # #shoulder rotation should be based on y distance of elbow from shoulder
+    # #next servo out should be x distance from elbow to shoulder
+    
+    # left_shoulder_to_rotate = np.abs(left_shoulder_lm.y - left_elbow_lm.y)
+    
+    # right_shoulder_to_rotate = np.abs(right_shoulder_lm.y - right_elbow_lm.y)
+    # left_elbow_to_rotate = np.abs(left_shoulder_lm.x - left_elbow_lm.x)
+    # right_elbow_to_rotate = np.abs(right_shoulder_lm.x - right_elbow_lm.x)
+    
+    # ls_angle = pos_to_angle(left_shoulder_to_rotate, 'y', height, 'left_shoulder')
+    # rs_angle = pos_to_angle(right_shoulder_to_rotate, 'y', height, 'right_shoulder')
+    # le_angle = pos_to_angle(left_elbow_to_rotate, 'x', width, 'left_shoulder')
+    # re_angle = pos_to_angle(right_elbow_to_rotate, 'x', width, 'right_shoulder')
+    
+    # msg += 'left_shoulder' + INTERNAL_DELIMITER + str(ls_angle) + LINE_DELIMITER + 'right_shoulder' + INTERNAL_DELIMITER + str(rs_angle) + LINE_DELIMITER + 'left_elbow' + INTERNAL_DELIMITER + str(le_angle) + LINE_DELIMITER + 'right_elbow' + INTERNAL_DELIMITER + str(re_angle) + LINE_DELIMITER
+ 
+
+def pos_to_angle(cur_pos, dimension, coeff, name):
+    rewrite = False
+    df = pd.read_csv(f'{name}.dat', index_col='names')
+    oldmax = df.loc[dimension]['max'] * coeff
+    oldmin = df.loc[dimension]['min'] * coeff
+    
+    if cur_pos > oldmax:
+        angle = 180
+        df.loc[dimension]['max'] = cur_pos
+        rewrite = True
+        
+    elif cur_pos < oldmin:
+        angle = 0
+        df.loc[dimension]['min'] = cur_pos
+        rewrite = True
+        
+    else:
+        angle = (((cur_pos * coeff) - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
+        
+    if rewrite:
+        df.to_csv(f'{name}.dat')
+    
+    return round(angle)
+
+
+#def calculate_angle(landmark1, landmark2, landmark3): #
+def calculate_angle(landmarks1, landmarks2, dims):
+    if dims == ['x', 'y']:
+        a1, b1 = landmarks1[0].x, landmarks1[0].y
+        a2, b2 = landmarks1[1].x, landmarks1[1].y
+
+        a3, b3 = landmarks2[0].x, landmarks2[0].y
+        a4, b4 = landmarks2[1].x, landmarks2[1].y
+        
+    elif dims == ['y', 'z']:
+        a1, b1 = landmarks1[0].y, landmarks1[0].z
+        a2, b2 = landmarks1[1].y, landmarks1[1].z
+
+        a3, b3 = landmarks2[0].y, landmarks2[0].z
+        a4, b4 = landmarks2[1].y, landmarks2[1].z
+        
+    
+    
+    # Calculate vectors
+    vector1 = (a1 - a2, b1 - b2)
+    vector2 = (a3 - a4, b3 - b4)
+
+    # Calculate dot product
+    dot_product = vector1[0] * vector2[0] + vector1[1] * vector2[1]
+
+    # Calculate magnitudes
+    magnitude1 = math.sqrt(vector1[0]**2 + vector1[1]**2)
+    magnitude2 = math.sqrt(vector2[0]**2 + vector2[1]**2)
+
+    # Calculate angle in radians
+    angle_rad = math.acos(dot_product / (magnitude1 * magnitude2))
+
+    # Convert angle to degrees
+    angle_deg = math.degrees(angle_rad)
+
+    return angle_deg
+
+# Example usage:
+# landmark1 = (x1, y1)  # Replace with actual landmark coordinates
+# landmark2 = (x2, y2)  # Replace with actual landmark coordinates
+# landmark3 = (x3, y3)  # Replace with actual landmark coordinates
+
+# angle = calculate_angle(landmark1, landmark2, landmark3)
+# print(f"Angle: {angle} degrees")
+
+    
 if __name__ == '__main__':
     main()
+
+    

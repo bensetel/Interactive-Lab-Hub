@@ -1,0 +1,65 @@
+left arm reaching straight forward (90 straight forward): servo 2 @ 125; everything else at 0
+left arm reaching straight out to the left (90 straight out): servo1 @ 125, servo 2 @ 125; everything else at 0
+left hand pointing forward, arm reaching straight out to the left (90 straight out): servo0 @ 180, servo1 @ 125, servo 2 @ 125; everything else at 0
+
+right arm straight forward - servo 12 @ 90; everything else at 0
+right arm straight out to the right - servo 12 @ 90; servo 13 @ 100
+right hand straight out - servo 14 @ 145
+
+right arm straight up - servo 12 @ 180
+
+left arm straight up - servo 2 @ 180
+
+
+---------------------------------------------------------------------------------------
+** first video ** 
+both arms straight out:
+     right elbow: (387, 630)
+     right shoulder: (546, 604)
+     -
+     left elbow: (956, 619)
+     left shoulder: (778, 592)
+
+both arms straight forward:
+     right elbow: (526, 624)
+     right shoulder: (584, 562)
+     -
+     left elbow: (759, 615)
+     left shoulder: (759, 562)
+
+both arms straight up:
+     right elbow: (470, 487)
+     right shoulder: (572, 567)
+     -
+     left elbow: (821, 476)
+     left shoulder: (755, 571)
+
+--------
+** second video **
+both arms straight out:
+     right elbow: (386, 655)
+     right shoulder: (531, 648)
+     right index: (208, 606
+     -     
+     left elbow: (891, 695
+     left shoulder: (
+     left index: (
+     
+both arms straight forward:
+     right elbow: (
+     right shoulder: (
+     right index: (
+     -
+     left elbow: (
+     left shoulder: (
+     left index: (
+     
+both arms straight up:
+     right elbow: (
+     right shoulder: (
+     right index: (
+     -
+     left elbow: (
+     left shoulder: (
+     left index: (
+     

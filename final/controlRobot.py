@@ -20,7 +20,7 @@ SERVOMIN = 150  # this is the 'minimum' pulse length count (out of 4096)
 SERVOMAX = 600  # this is the 'maximum' pulse length count (out of 4096)
 
 # Servo numbers for each servo at angle 0
-servo_numbers = [0, 1, 2, 12, 13, 14]
+servo = [0, 1, 2, 12, 13, 14]
 
 
 """
@@ -46,15 +46,10 @@ servo_dict = {
 global last_msg
 last_msg = ''
 
-def set_zero():
-    for servo_num in servo_numbers:
-        normalized_angle = 0
-
-        if servo_num in [2, 13, 14]:
-            normalized_angle = 180 - normalized_angle
-            
-        kit.servo[servo_num].angle = normalized_angle
-        time.sleep(0.001)
+# Function to initialize all servos to the 0 position
+def initialize_servos():
+    for servo_num in servo:
+        set_servo_pulse(servo_num, 0)
 
 def set_servo_pulse(n, angle):
     # Limit the angle to the valid range (0 to 180)
@@ -67,14 +62,16 @@ def set_servo_pulse(n, angle):
 def move_servos(servoNum, startAngle, endAngle):
     # Determine the direction of movement
     step = 1 if startAngle < endAngle else -1
-    
+    print(type(startAngle))
+    print(type(endAngle))
+
     # Loop from startAngle to endAngle
     for angle in range(startAngle, endAngle, step):
         set_servo_pulse(servoNum, angle)
         time.sleep(0.0001)
         
 def move_wrapper(servo_num, angle):
-    start = kit.servo[servo_num].angle
+    start = round(kit.servo[servo_num].angle)
     move_servos(servo_num, start, angle)
 
 def message_to_servo_angles(message):
@@ -89,18 +86,26 @@ def message_to_servo_angles(message):
     return retval
 
 def main():
-    set_zero()
-    time.sleep(0.05)
-    client = mqtt.Client(str(uuid.uuid1()))
-    client.tls_set(cert_reqs=ssl.CERT_NONE)
-    client.username_pw_set('idd', 'device@theFarm')
-    client.connect(
-        'farlab.infosci.cornell.edu',
-        port=8883)
-    topic = 'IDD/cool_table/robit'
-    client.subscribe(topic)
-    client.on_message = on_message
-    client.loop_forever()
+    try:
+        initialize_servos()
+        time.sleep(0.05)
+        client = mqtt.Client(str(uuid.uuid1()))
+        client.tls_set(cert_reqs=ssl.CERT_NONE)
+        client.username_pw_set('idd', 'device@theFarm')
+        client.connect(
+            'farlab.infosci.cornell.edu',
+            port=8883)
+        topic = 'IDD/cool_table/robit'
+        client.subscribe(topic)
+        client.on_message = on_message
+        client.loop_forever()
+
+    except KeyboardInterrupt:
+        # Handle keyboard interrupt (e.g., script manually closed)
+        print("Script interrupted. Resetting servos to zero.")
+        
+        # Reset all servos to zero
+        initialize_servos()
 
 def on_message(client, userdata, msg):
     global last_msg
