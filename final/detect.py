@@ -39,6 +39,9 @@ import glob
 import pandas as pd
 import math
 
+from vosk import Model, KaldiRecognizer
+import sounddevice as sd
+import qwiic_button 
 
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
@@ -114,6 +117,15 @@ HEAD_RANGE = [0, 200]
 
 def pl_landmark_to_angle(pl_landmark):
     return pl_landmark
+
+
+q = queue.Queue()
+
+def callback(indata, frames, time, status):
+    """This is called (from a separate thread) for each audio block."""
+    if status:
+        print(status, file=sys.stderr)
+    q.put(bytes(indata))
     
 def run(model: str, num_poses: int,
         min_pose_detection_confidence: float,
@@ -208,9 +220,17 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             hangle = round(trig_angle_to_servo_angle(head, 'head'))
             hangle = 180 - max(0, min(180, hangle))
             
-            print('#'*50)
-            print('head is:', head)
-            print('hangle is:', hangle)
+            #print('#'*50)
+            #print('head is:', head)
+            #print('hangle is:', hangle)
+
+            #wrist-to-index against wrist-to-elbow
+            
+            
+            #lhand = 
+            #rhand = 
+            
+            
             """
             print('#'*50)
             #print('LFANGLE IS:', lflangle)
@@ -251,8 +271,8 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             lflangle = round(max(0, min(((90 - lshangle)/90 * lflangle_xy + lshangle/90 * lflangle_xz), 180))/2)
             rflangle = round(max(0, min(((90 - rshangle)/90 * rflangle_xy + rshangle/90 * rflangle_xz), 180))/2)
             
-            print('lflangle is:', lflangle)
-            print('rflangle is:', rflangle)
+            #print('lflangle is:', lflangle)
+            #print('rflangle is:', rflangle)
             
             lshangle = round(trig_angle_to_servo_angle(lshangle, 'left_shoulder'))
             rshangle = round(trig_angle_to_servo_angle(rshangle, 'right_shoulder'))
@@ -266,8 +286,8 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             elif rshangle > 180:
                 rshangle = 180
                 
-            print('ANGLE IS:', rshangle)
-            print('#'*50)
+            #print('ANGLE IS:', rshangle)
+            #print('#'*50)
 
             
             msg = ''
@@ -296,121 +316,169 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         result_callback=save_result)
     detector = vision.PoseLandmarker.create_from_options(options)
 
-    # Continuously capture images from the camera and run inference
-    while cap.isOpened():
-        success, image = cap.read()
-        if not success:
-            sys.exit(
-                'ERROR: Unable to read from webcam. Please verify your webcam settings.'
-            )
+    topic_2 = 'IDD/cool_table/robit_message'
+    my_button = qwiic_button.QwiicButton()
+    brightness = 100
 
-        image = cv2.flip(image, 1)
+    if my_button.begin() == False:
+        print("\nThe Qwiic Button isn't connected to the system. Please check your connection", \
+            file=sys.stderr)
+        raise Exception("Button not connected")
+        
+    print("\nButton ready!")
+    device_info = sd.query_devices(None, "input")
+    # soundfile expects an int, sounddevice provides a float:
+    samplerate = int(device_info["default_samplerate"])
+    model = Model(lang="en-us")
+    send_next = False
+    rec = KaldiRecognizer(model, samplerate)
+    ticks = 0
+    
+    
+    while True:
+        print('new input stream')
+        with sd.RawInputStream(samplerate=samplerate, blocksize = 8000, device=None,
+            dtype="int16", channels=1, callback=callback):
+            
+            # Continuously capture images from the camera and run inference
+            while cap.isOpened():
+                if (my_button.is_button_pressed()) and not(send_next):
+                    send_next = True
+                    my_button.LED_on(brightness)
 
-        # Convert the image from BGR to RGB as required by the TFLite model.
-        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
+                    print("#" * 80)
+                    print("Press Ctrl+C to stop the recording")
+                    print("#" * 80)
+                    break
 
-        # Run pose landmarker using the model.
-        detector.detect_async(mp_image, time.time_ns() // 1_000_000)
+                if send_next:
+                    sdata = q.get()
+                    tmp = rec.AcceptWaveform(sdata)
+                    if tmp:
+                        res = rec.Result()
+                        client.publish(topic_2, res.split(':')[1].split("}")[0])
+                        if ticks > 5:
+                            send_next = False
+                            my_button.LED_off()
 
-        # Show the FPS
-        fps_text = 'FPS = {:.1f}'.format(FPS)
-        text_location = (left_margin, row_size)
-        current_frame = image
-        cv2.putText(current_frame, fps_text, text_location,
-                    cv2.FONT_HERSHEY_DUPLEX,
-                    font_size, text_color, font_thickness, cv2.LINE_AA)
+                    if not my_button.is_button_pressed():
+                        ticks += 1
+                    else:
+                        ticks = 0
 
-        if DETECTION_RESULT:
-            # Draw landmarks.
-            for pose_landmarks in DETECTION_RESULT.pose_landmarks:
-                
-                # Draw the pose landmarks.
-                pose_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
-                pose_landmarks_proto.landmark.extend([
-                    landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y,
-                                                    z=landmark.z) for landmark
-                    in pose_landmarks
-                ])
+                success, image = cap.read()
+                if not success:
+                    sys.exit(
+                        'ERROR: Unable to read from webcam. Please verify your webcam settings.'
+                    )
 
-                # Draw landmarks and coordinates
-                for i, landmark in enumerate(pose_landmarks_proto.landmark):
-                    x_coord = int(landmark.x * width)
-                    y_coord = int(landmark.y * height)
-                    z_coord = int(landmark.z * 100)
+                image = cv2.flip(image, 1)
 
-                    # Display coordinates next to the landmark
-                    if i == 11: #left shoulder
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
-                   
-                    elif i == 12: #right shoulder
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
-                        
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
+                # Convert the image from BGR to RGB as required by the TFLite model.
+                rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
 
-                    elif i == 13: #left elbow
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
-                    
-                    elif i == 14: #right elbow
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
-                    
-                    elif i == 19: #left index finger
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
-                        
-                    elif i == 20: #right index finger
-                        y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
-                        coord_location = (x_coord, y_coord + y_shift)
-                        cv2.putText(current_frame, coord_text, coord_location,
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    font_size, text_color2, font_thickness, cv2.LINE_AA)
- 
-                mp_drawing.draw_landmarks(
-                    current_frame,
-                    pose_landmarks_proto,
-                    mp_pose.POSE_CONNECTIONS,
-                    mp_drawing_styles.get_default_pose_landmarks_style())
+                # Run pose landmarker using the model.
+                detector.detect_async(mp_image, time.time_ns() // 1_000_000)
 
-        if (output_segmentation_masks and DETECTION_RESULT):
-            if DETECTION_RESULT.segmentation_masks is not None:
-                segmentation_mask = DETECTION_RESULT.segmentation_masks[0].numpy_view()
-                mask_image = np.zeros(image.shape, dtype=np.uint8)
-                mask_image[:] = mask_color
-                condition = np.stack((segmentation_mask,) * 3, axis=-1) > 0.1
-                visualized_mask = np.where(condition, mask_image, current_frame)
-                current_frame = cv2.addWeighted(current_frame, overlay_alpha,
-                                                visualized_mask, overlay_alpha,
-                                                0)
+                # Show the FPS
+                fps_text = 'FPS = {:.1f}'.format(FPS)
+                text_location = (left_margin, row_size)
+                current_frame = image
+                cv2.putText(current_frame, fps_text, text_location,
+                            cv2.FONT_HERSHEY_DUPLEX,
+                            font_size, text_color, font_thickness, cv2.LINE_AA)
 
-        cv2.imshow('pose_landmarker', current_frame)
+                if DETECTION_RESULT:
+                    # Draw landmarks.
+                    for pose_landmarks in DETECTION_RESULT.pose_landmarks:
 
-        # Stop the program if the ESC key is pressed.
-        if cv2.waitKey(1) == 27:
-            break
+                        # Draw the pose landmarks.
+                        pose_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+                        pose_landmarks_proto.landmark.extend([
+                            landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y,
+                                                            z=landmark.z) for landmark
+                            in pose_landmarks
+                        ])
+
+                        # Draw landmarks and coordinates
+                        for i, landmark in enumerate(pose_landmarks_proto.landmark):
+                            x_coord = int(landmark.x * width)
+                            y_coord = int(landmark.y * height)
+                            z_coord = int(landmark.z * 100)
+
+                            # Display coordinates next to the landmark
+                            if i == 11: #left shoulder
+                                y_shift = -110
+                                coord_text = f'({x_coord}, {y_coord}, {z_coord})'
+                                coord_location = (x_coord, y_coord + y_shift)
+                                cv2.putText(current_frame, coord_text, coord_location,
+                                            cv2.FONT_HERSHEY_SIMPLEX,
+                                            font_size, text_color2, font_thickness, cv2.LINE_AA)
+
+                            elif i == 12: #right shoulder
+                                y_shift = -110
+                                coord_text = f'({x_coord}, {y_coord}, {z_coord})'
+
+                                coord_location = (x_coord, y_coord + y_shift)
+                                cv2.putText(current_frame, coord_text, coord_location,
+                                            cv2.FONT_HERSHEY_SIMPLEX,
+                                            font_size, text_color2, font_thickness, cv2.LINE_AA)
+
+                            elif i == 13: #left elbow
+                                y_shift = -110
+                                coord_text = f'({x_coord}, {y_coord}, {z_coord})'
+                                coord_location = (x_coord, y_coord + y_shift)
+                                cv2.putText(current_frame, coord_text, coord_location,
+                                            cv2.FONT_HERSHEY_SIMPLEX,
+                                            font_size, text_color2, font_thickness, cv2.LINE_AA)
+
+                            elif i == 14: #right elbow
+                                y_shift = -110
+                                coord_text = f'({x_coord}, {y_coord}, {z_coord})'
+                                coord_location = (x_coord, y_coord + y_shift)
+                                cv2.putText(current_frame, coord_text, coord_location,
+                                            cv2.FONT_HERSHEY_SIMPLEX,
+                                            font_size, text_color2, font_thickness, cv2.LINE_AA)
+
+                            elif i == 19: #left index finger
+                                y_shift = -110
+                                coord_text = f'({x_coord}, {y_coord}, {z_coord})'
+                                coord_location = (x_coord, y_coord + y_shift)
+                                cv2.putText(current_frame, coord_text, coord_location,
+                                            cv2.FONT_HERSHEY_SIMPLEX,
+                                            font_size, text_color2, font_thickness, cv2.LINE_AA)
+
+                            elif i == 20: #right index finger
+                                y_shift = -110
+                                coord_text = f'({x_coord}, {y_coord}, {z_coord})'
+                                coord_location = (x_coord, y_coord + y_shift)
+                                cv2.putText(current_frame, coord_text, coord_location,
+                                            cv2.FONT_HERSHEY_SIMPLEX,
+                                            font_size, text_color2, font_thickness, cv2.LINE_AA)
+
+                        mp_drawing.draw_landmarks(
+                            current_frame,
+                            pose_landmarks_proto,
+                            mp_pose.POSE_CONNECTIONS,
+                            mp_drawing_styles.get_default_pose_landmarks_style())
+
+                if (output_segmentation_masks and DETECTION_RESULT):
+                    if DETECTION_RESULT.segmentation_masks is not None:
+                        segmentation_mask = DETECTION_RESULT.segmentation_masks[0].numpy_view()
+                        mask_image = np.zeros(image.shape, dtype=np.uint8)
+                        mask_image[:] = mask_color
+                        condition = np.stack((segmentation_mask,) * 3, axis=-1) > 0.1
+                        visualized_mask = np.where(condition, mask_image, current_frame)
+                        current_frame = cv2.addWeighted(current_frame, overlay_alpha,
+                                                        visualized_mask, overlay_alpha,
+                                                        0)
+
+                cv2.imshow('pose_landmarker', current_frame)
+
+                # Stop the program if the ESC key is pressed.
+                if cv2.waitKey(1) == 27:
+                    break
         
     detector.close()
     cap.release()
