@@ -68,3 +68,12 @@
                     print('voter is:', voter)
                     print('iters is:', iters)
                     """
+            #nose_to_lelbow = [lands[0], lands[13]]
+            #nose_to_lwrist = [lands[0], lands[15]]
+            
+            #lflexor_xy_angle = max(0, (calculate_angle(ears, lshoulder_to_wrist, ['x', 'y'])))
+            #rflexor_xy_angle = calculate_angle(ears, rshoulder_to_wrist, ['x', 'y'])
+
+            #lflexor_xz_angle = max(0, (calculate_angle(ears, lshoulder_to_wrist, ['x', 'z'])))
+            #lflexor_xz_angle = calc_magnitude_ratio(nose_to_lelbow, ears, ['x', 'z'])
+            #lflexor_xz_angle = lshoulder_to_wrist[1].x*width - lshoulder_to_wrist[0].x*width

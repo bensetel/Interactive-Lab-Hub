@@ -107,6 +107,10 @@ threshold = [0.1] * pd_len
 INTERNAL_DELIMITER = '#'
 LINE_DELIMITER = '*'
 
+SHOULDER_RANGE = [100, 170]
+LFLEXOR_XZ_RANGE = [0.8, 4.0]
+LFLEXOR_XY_RANGE = [-15, 15]
+
 def pl_landmark_to_angle(pl_landmark):
     return pl_landmark
     
@@ -162,7 +166,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         COUNTER += 1
         pl = result.pose_landmarks
         #print('pl:', pl)
-        print('COUNTER IS:', COUNTER)
 
         
         msg = ''
@@ -175,17 +178,103 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                 print('initing')
                 init_positions = pl[0]
                 msg = 'init'
-            else:
-                msg = generate_message(pl[0])
+
             #calc shoulder
             lands = pl[0]
-            lm1 = [lands[0], lands[11]]
-            lm2 = [lands[12], lands[14]]
-            angle = calculate_angle(lm1, lm2, ['y', 'z'])
+            nose_to_lshoulder = [lands[0], lands[11]]
+            rshoulder_to_wrist = [lands[12], lands[16]]#lands[14]]
+
+            lshoulder_to_wrist = [lands[11], lands[15]]#lands[13]]
+
+            chest = [lands[12], lands[11]]
+            ears = [lands[7], lands[8]]
+            
+            rshangle = calculate_angle(nose_to_lshoulder, lshoulder_to_wrist, ['y', 'z'])
+            lshangle = calculate_angle(nose_to_lshoulder, rshoulder_to_wrist, ['y', 'z'])
+
+
+            lflexor_xz_angle = (lands[16].x*width - lands[12].x*width)/(lands[8].x*width - lands[7].x*width)
+            lflexor_xy_angle = (lands[16].y*height - lands[12].y*height)/(lands[0].y*height - lands[10].y*height)    
+
+            rflexor_xz_angle = (lands[15].x*width - lands[11].x*width)/(lands[7].x*width - lands[8].x*width)
+            rflexor_xy_angle = (lands[15].y*height - lands[11].y*height)/(lands[0].y*height - lands[9].y*height)    
+
+            lflangle_xz = trig_angle_to_servo_angle(lflexor_xz_angle, 'lflexor_xz')
+            lflangle_xy = trig_angle_to_servo_angle(lflexor_xy_angle, 'lflexor_xy')
+
+            rflangle_xz = trig_angle_to_servo_angle(rflexor_xz_angle, 'lflexor_xz')
+            rflangle_xy = trig_angle_to_servo_angle(rflexor_xy_angle, 'lflexor_xy')
+
+            head = (lands[0].x*width - lands[12].x*width)
+
             print('#'*50)
-            print('ANGLE IS:', angle)
+            print('head is:', head)
+            """
             print('#'*50)
-                        
+            #print('LFANGLE IS:', lflangle)
+            print("lflexor_xy is:", lflexor_xy_angle)
+            print("lflexor_xz is:", lflexor_xz_angle)
+            print("lflangle_xz is:", lflangle_xz)
+            print("lflangle_xy is:", lflangle_xy)
+            
+            print('-'*50)
+            
+            print("rflexor_xy is:", rflexor_xy_angle)
+            print("rflexor_xz is:", rflexor_xz_angle)
+            print("rflangle_xz is:", rflangle_xz)
+            print("rflangle_xy is:", rflangle_xy)
+            """
+            
+            
+            if lflangle_xz < 0:
+                lflangle_xz = 0
+            elif lflangle_xz > 180:
+                lflangle_xz = 180
+            if lflangle_xy < 0:
+                lflangle_xy = 0
+            elif lflangle_xy > 180:
+                lflangle_xy = 180
+
+                
+            if rflangle_xz < 0:
+                rflangle_xz = 0
+            elif rflangle_xz > 180:
+                rflangle_xz = 180
+            if rflangle_xy < 0:
+                rflangle_xy = 0
+            elif rflangle_xy > 180:
+                rflangle_xy = 180
+            
+                
+            lflangle = round(max(0, min(((90 - lshangle)/90 * lflangle_xy + lshangle/90 * lflangle_xz), 180))/2)
+            rflangle = round(max(0, min(((90 - rshangle)/90 * rflangle_xy + rshangle/90 * rflangle_xz), 180))/2)
+            
+            print('lflangle is:', lflangle)
+            print('rflangle is:', rflangle)
+            
+            lshangle = round(trig_angle_to_servo_angle(lshangle, 'left_shoulder'))
+            rshangle = round(trig_angle_to_servo_angle(rshangle, 'right_shoulder'))
+            
+            if lshangle < 0:
+                lshangle = 0
+            elif lshangle > 180:
+                lshangle = 180
+            if rshangle < 0:
+                rshangle = 0
+            elif rshangle > 180:
+                rshangle = 180
+                
+            print('ANGLE IS:', rshangle)
+            print('#'*50)
+
+            
+            msg = ''
+            msg += 'left_shoulder' + INTERNAL_DELIMITER + str(lshangle) + LINE_DELIMITER + 'right_shoulder' + INTERNAL_DELIMITER + str(rshangle) + LINE_DELIMITER + 'left_elbow' + INTERNAL_DELIMITER + str(lflangle) + LINE_DELIMITER + 'right_elbow' + INTERNAL_DELIMITER + str(rflangle) + LINE_DELIMITER
+
+            
+            
+            
+            
         client.publish(topic, msg)
         
 
@@ -246,12 +335,12 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                 for i, landmark in enumerate(pose_landmarks_proto.landmark):
                     x_coord = int(landmark.x * width)
                     y_coord = int(landmark.y * height)
-                    z_coord = landmark.z
+                    z_coord = int(landmark.z * 100)
 
                     # Display coordinates next to the landmark
                     if i == 11: #left shoulder
                         y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
+                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
                         coord_location = (x_coord, y_coord + y_shift)
                         cv2.putText(current_frame, coord_text, coord_location,
                                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -259,7 +348,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                    
                     elif i == 12: #right shoulder
                         y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
+                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
                         
                         coord_location = (x_coord, y_coord + y_shift)
                         cv2.putText(current_frame, coord_text, coord_location,
@@ -268,7 +357,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
 
                     elif i == 13: #left elbow
                         y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
+                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
                         coord_location = (x_coord, y_coord + y_shift)
                         cv2.putText(current_frame, coord_text, coord_location,
                                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -276,7 +365,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                     
                     elif i == 14: #right elbow
                         y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
+                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
                         coord_location = (x_coord, y_coord + y_shift)
                         cv2.putText(current_frame, coord_text, coord_location,
                                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -284,7 +373,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                     
                     elif i == 19: #left index finger
                         y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
+                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
                         coord_location = (x_coord, y_coord + y_shift)
                         cv2.putText(current_frame, coord_text, coord_location,
                                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -292,7 +381,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                         
                     elif i == 20: #right index finger
                         y_shift = -110
-                        coord_text = f'({x_coord}, {y_coord})'
+                        coord_text = f'({x_coord}, {y_coord}, {z_coord})'
                         coord_location = (x_coord, y_coord + y_shift)
                         cv2.putText(current_frame, coord_text, coord_location,
                                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -321,7 +410,7 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         if cv2.waitKey(1) == 27:
             break
         
-        time.sleep(0.1)
+        time.sleep(0.05)
 
     detector.close()
     cap.release()
@@ -392,9 +481,6 @@ def main():
 #############
 # MATH SECTION
 ###############
-def generate_message(landmarks):
-    
-    return ''
 
     # left_shoulder_lm = landmarks[reverse_pose_dict['left_shoulder']]
     # right_shoulder_lm = landmarks[reverse_pose_dict['right_shoulder']]
@@ -443,6 +529,36 @@ def pos_to_angle(cur_pos, dimension, coeff, name):
     return round(angle)
 
 
+def calc_magnitude_ratio(landmarks1, landmarks2, dims):
+    if dims == ['x', 'y']:
+        a1, b1 = landmarks1[0].x, landmarks1[0].y
+        a2, b2 = landmarks1[1].x, landmarks1[1].y
+
+        a3, b3 = landmarks2[0].x, landmarks2[0].y
+        a4, b4 = landmarks2[1].x, landmarks2[1].y
+        
+    elif dims == ['y', 'z']:
+        a1, b1 = landmarks1[0].y, landmarks1[0].z
+        a2, b2 = landmarks1[1].y, landmarks1[1].z
+
+        a3, b3 = landmarks2[0].y, landmarks2[0].z
+        a4, b4 = landmarks2[1].y, landmarks2[1].z
+
+    elif dims == ['x', 'z']:
+        a1, b1 = landmarks1[0].x, landmarks1[0].z
+        a2, b2 = landmarks1[1].x, landmarks1[1].z
+
+        a3, b3 = landmarks2[0].x, landmarks2[0].z
+        a4, b4 = landmarks2[1].x, landmarks2[1].z
+    # Calculate vectors
+    vector1 = (a1 - a2, b1 - b2)
+    vector2 = (a3 - a4, b3 - b4)
+    
+    # magnitude1 = math.sqrt(vector1[0]**2 + vector1[1]**2)
+    # magnitude2 = math.sqrt(vector2[0]**2 + vector2[1]**2)
+
+    return vector1[0]/vector2[0]
+
 #def calculate_angle(landmark1, landmark2, landmark3): #
 def calculate_angle(landmarks1, landmarks2, dims):
     if dims == ['x', 'y']:
@@ -458,9 +574,13 @@ def calculate_angle(landmarks1, landmarks2, dims):
 
         a3, b3 = landmarks2[0].y, landmarks2[0].z
         a4, b4 = landmarks2[1].y, landmarks2[1].z
-        
-    
-    
+
+    elif dims == ['x', 'z']:
+        a1, b1 = landmarks1[0].x, landmarks1[0].z
+        a2, b2 = landmarks1[1].x, landmarks1[1].z
+
+        a3, b3 = landmarks2[0].x, landmarks2[0].z
+        a4, b4 = landmarks2[1].x, landmarks2[1].z
     # Calculate vectors
     vector1 = (a1 - a2, b1 - b2)
     vector2 = (a3 - a4, b3 - b4)
@@ -479,6 +599,24 @@ def calculate_angle(landmarks1, landmarks2, dims):
     angle_deg = math.degrees(angle_rad)
 
     return angle_deg
+
+def trig_angle_to_servo_angle(trig_angle, servo_name):
+    oldmin = 1
+    oldmax = 2
+    if 'shoulder' in servo_name:
+        oldmin = SHOULDER_RANGE[0]
+        oldmax = SHOULDER_RANGE[1]
+    elif 'lflexor_xz' in servo_name:
+        print('xz!')
+        oldmin = LFLEXOR_XZ_RANGE[0]
+        oldmax = LFLEXOR_XZ_RANGE[1]
+    elif 'lflexor_xy' in servo_name:
+        print('xy!')
+        oldmin = LFLEXOR_XY_RANGE[0]
+        oldmax = LFLEXOR_XY_RANGE[1]
+        
+    servo_angle = ((trig_angle - oldmin) / (oldmax - oldmin)) * (180 - 0) + 0
+    return servo_angle
 
 # Example usage:
 # landmark1 = (x1, y1)  # Replace with actual landmark coordinates
