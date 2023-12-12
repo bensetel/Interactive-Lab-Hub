@@ -118,6 +118,8 @@ def on_message(client, userdata, msg):
         for servo_num, angle in todo:
             angle = max(0, min(180, angle))
             if servo_num == 3:
+                print('servo num is 3!')
+                print('angle is:', angle)
                 small = 90 - HEAD_BUFFER
                 big = 90 + HEAD_BUFFER
                 if (angle > small) and (angle < big):
@@ -127,9 +129,12 @@ def on_message(client, userdata, msg):
                         angle -= HEAD_BUFFER
                     else:
                         angle += HEAD_BUFFER
-                        
+                angle = max(0, min(180, angle))
+                print('angle is:', angle)
+                
             elif servo_num in [2, 13, 14]:
-                angle = 180 - angle 
+                angle = 180 - angle
+                
             kit.servo[servo_num].angle = angle 
     
 #shoulder rotation should be based on y distance of elbow from shoulder

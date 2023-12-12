@@ -205,7 +205,8 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             rflangle_xy = trig_angle_to_servo_angle(rflexor_xy_angle, 'lflexor_xy')
 
             head = (lands[0].x*width - lands[12].x*width)
-            hangle = min(0, max(round(trig_angle_to_servo_angle(head, 'head')), 180))
+            hangle = round(trig_angle_to_servo_angle(head, 'head'))
+            hangle = 180 - max(0, min(180, hangle))
             
             print('#'*50)
             print('head is:', head)
