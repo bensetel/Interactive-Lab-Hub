@@ -1,3 +1,4 @@
+import os
 import time
 from adafruit_servokit import ServoKit
 
@@ -5,6 +6,15 @@ import paho.mqtt.client as mqtt
 import uuid
 import queue
 import ssl
+
+import RPi.GPIO as GPIO
+
+# Set the GPIO mode to BCM (Broadcom SOC channel)
+GPIO.setmode(GPIO.BCM)
+
+# Set up GPIO pin 26 as an output
+led_pin = 26
+GPIO.setup(led_pin, GPIO.OUT)
 
 #from detect import INTERNAL_DELIMITER, LINE_DELIMITER
 INTERNAL_DELIMITER = '#'
@@ -57,7 +67,8 @@ def initialize_servos():
     for servo_num in servo:
         if servo_num == 3:
             set_servo_pulse(servo_num, 90)
-        set_servo_pulse(servo_num, 0)
+        else: 
+            set_servo_pulse(servo_num, 0)
 
 def set_servo_pulse(n, angle):
     # Limit the angle to the valid range (0 to 180)
@@ -81,6 +92,7 @@ def message_to_servo_angles(message):
 def main():
 
     try:
+        GPIO.output(led_pin, GPIO.HIGH)
         initialize_servos()
         time.sleep(0.05)
         client = mqtt.Client(str(uuid.uuid1()))
@@ -99,6 +111,7 @@ def main():
         print("Script interrupted. Resetting servos to zero.")
         
         # Reset all servos to zero
+        GPIO.output(led_pin, GPIO.LOW)
         initialize_servos()
 
 def on_message(client, userdata, msg):
@@ -111,7 +124,15 @@ def on_message(client, userdata, msg):
         print('no landmarks!')
         initialize_servos()
         time.sleep(0.05)
-    
+    elif (message[0] == '&'):
+        f = open('tmp.txt', 'w+')
+        f.write(message[1:])
+        f.close()
+
+        # print('starting speech')      
+        os.system('festival --tts tmp.txt &')
+        # print('ended speech')
+
     else:
         # print('message is:', message)
         todo = message_to_servo_angles(message)
