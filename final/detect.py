@@ -219,15 +219,15 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             head = (lands[0].x*width - lands[12].x*width)
             hangle = round(trig_angle_to_servo_angle(head, 'head'))
             hangle = 180 - max(0, min(180, hangle))
-            
-            #print('#'*50)
-            #print('head is:', head)
-            #print('hangle is:', hangle)
 
+            lwrist = lands[16]
+            rwrist = lands[15]
+            lindex = lands[20]
+            rindex = lands[19]
+            
             #wrist-to-index against wrist-to-elbow
             
-            
-            #lhand = 
+            #Lhand = 
             #rhand = 
             
             
@@ -292,10 +292,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
             
             msg = ''
             msg += 'left_shoulder' + INTERNAL_DELIMITER + str(lshangle) + LINE_DELIMITER + 'right_shoulder' + INTERNAL_DELIMITER + str(rshangle) + LINE_DELIMITER + 'left_elbow' + INTERNAL_DELIMITER + str(lflangle) + LINE_DELIMITER + 'right_elbow' + INTERNAL_DELIMITER + str(rflangle) + LINE_DELIMITER + 'head' + INTERNAL_DELIMITER + str(hangle) + LINE_DELIMITER
-
-            
-            
-            
             
         client.publish(topic, msg)
         
@@ -316,7 +312,6 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
         result_callback=save_result)
     detector = vision.PoseLandmarker.create_from_options(options)
 
-    topic_2 = 'IDD/cool_table/robit_message'
     my_button = qwiic_button.QwiicButton()
     brightness = 100
 
@@ -356,7 +351,8 @@ s      min_pose_presence_confidence: The minimum confidence score of pose
                     tmp = rec.AcceptWaveform(sdata)
                     if tmp:
                         res = rec.Result()
-                        client.publish(topic_2, res.split(':')[1].split("}")[0])
+                        msg = '&' + res.split(':')[1].split("}")[0] 
+                        client.publish(topic, msg)
                         if ticks > 5:
                             send_next = False
                             my_button.LED_off()

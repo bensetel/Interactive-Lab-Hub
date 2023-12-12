@@ -111,6 +111,7 @@ def on_message(client, userdata, msg):
         print('no landmarks!')
         initialize_servos()
         time.sleep(0.05)
+    
     else:
         # print('message is:', message)
         todo = message_to_servo_angles(message)
